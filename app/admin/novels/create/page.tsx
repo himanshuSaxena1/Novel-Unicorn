@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -17,9 +17,10 @@ import {
 } from '@/components/ui/select'
 import { X, Plus, Upload, Save, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const GENRE_OPTIONS = [
-  'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller', 'Horror', 
+  'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller', 'Horror',
   'Adventure', 'Drama', 'Comedy', 'Action', 'Cultivation', 'System',
   'Reincarnation', 'Magic', 'School', 'Martial Arts', 'Gaming', 'VR'
 ]
@@ -49,7 +50,7 @@ export default function CreateNovelPage() {
       ...prev,
       [field]: value
     }))
-    
+
     // Auto-generate slug from title
     if (field === 'title') {
       setFormData(prev => ({
@@ -74,15 +75,25 @@ export default function CreateNovelPage() {
     setIsSubmitting(true)
 
     try {
-      // TODO: Implement actual API call
-      console.log('Creating novel:', formData)
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      const response = await fetch('/api/novels', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create novel')
+      }
+
+      const novel = await response.json()
+      console.log('Novel created:', novel)
+
       router.push('/admin/novels')
     } catch (error) {
       console.error('Error creating novel:', error)
+      // You might want to show a toast notification here
     } finally {
       setIsSubmitting(false)
     }
@@ -188,7 +199,9 @@ export default function CreateNovelPage() {
 
               {formData.cover && (
                 <div className="aspect-[3/4] w-48 mx-auto">
-                  <img
+                  <Image
+                    width={300}
+                    height={400}
                     src={formData.cover}
                     alt="Cover preview"
                     className="w-full h-full object-cover rounded-lg border"
@@ -200,7 +213,7 @@ export default function CreateNovelPage() {
                 <Upload className="mr-2 h-4 w-4" />
                 Upload Cover Image
               </Button>
-              
+
               <p className="text-xs text-muted-foreground text-center">
                 Recommended size: 300x400px (3:4 ratio)
               </p>
@@ -223,8 +236,8 @@ export default function CreateNovelPage() {
                     type="button"
                     variant={formData.genres.includes(genre) ? "default" : "outline"}
                     size="sm"
-                    onClick={() => 
-                      formData.genres.includes(genre) 
+                    onClick={() =>
+                      formData.genres.includes(genre)
                         ? removeItem('genres', genre)
                         : formData.genres.length < 5 && addItem('genres', genre)
                     }
@@ -244,8 +257,8 @@ export default function CreateNovelPage() {
                   {formData.genres.map((genre) => (
                     <Badge key={genre} variant="default" className="flex items-center space-x-1">
                       <span>{genre}</span>
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
+                      <X
+                        className="h-3 w-3 cursor-pointer"
                         onClick={() => removeItem('genres', genre)}
                       />
                     </Badge>
@@ -271,8 +284,8 @@ export default function CreateNovelPage() {
                     type="button"
                     variant={formData.tags.includes(tag) ? "default" : "outline"}
                     size="sm"
-                    onClick={() => 
-                      formData.tags.includes(tag) 
+                    onClick={() =>
+                      formData.tags.includes(tag)
                         ? removeItem('tags', tag)
                         : formData.tags.length < 10 && addItem('tags', tag)
                     }
@@ -292,8 +305,8 @@ export default function CreateNovelPage() {
                   {formData.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="flex items-center space-x-1">
                       <span>{tag}</span>
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
+                      <X
+                        className="h-3 w-3 cursor-pointer"
                         onClick={() => removeItem('tags', tag)}
                       />
                     </Badge>

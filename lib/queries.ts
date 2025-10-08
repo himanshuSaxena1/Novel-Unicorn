@@ -150,3 +150,12 @@ export async function getUserSubscription(userId: string) {
 
   return user
 }
+  
+
+export function getChapterBySlugs(novelSlug: string, chapterSlug: string) {
+  const novel = getNovelBySlug(novelSlug)
+  if (!novel) return { novel: undefined, chapter: undefined, index: -1 }
+  const index = novel.chapters.findIndex((c) => c.slug === chapterSlug)
+  const chapter = index >= 0 ? novel.chapters[index] : undefined
+  return { novel, chapter, index }
+}

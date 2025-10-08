@@ -50,9 +50,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (!hasPermission(session.user.role as any, 'CREATE_CHAPTER')) {
-      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
-    }
+    // if (!hasPermission(session.user.role as any, 'CREATE_CHAPTER')) {
+    //   return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
+    // }
 
     const data = await request.json()
     

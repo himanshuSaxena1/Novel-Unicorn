@@ -37,10 +37,10 @@ export default function AdminNovelsPage() {
         page: page.toString(),
         limit: '20'
       })
-      
+
       if (searchQuery) params.set('search', searchQuery)
       if (statusFilter !== 'ALL') params.set('status', statusFilter)
-      
+
       const response = await fetch(`/api/admin/novels?${params}`)
       if (!response.ok) throw new Error('Failed to fetch novels')
       return response.json()
@@ -74,7 +74,7 @@ export default function AdminNovelsPage() {
             <div className="text-2xl font-bold">{data?.total || 0}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Ongoing</CardTitle>
@@ -86,7 +86,7 @@ export default function AdminNovelsPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Completed</CardTitle>
@@ -98,7 +98,7 @@ export default function AdminNovelsPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Views</CardTitle>
@@ -123,7 +123,7 @@ export default function AdminNovelsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
@@ -227,6 +227,12 @@ export default function AdminNovelsPage() {
                             <Link href={`/admin/novels/${novel.id}/edit`}>
                               <Edit className="mr-2 h-4 w-4" />
                               Edit
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={`/admin/chapters/create?novelId=${novel.id}`}>
+                              <Plus className="mr-2 h-4 w-4" />
+                              Add Chapter
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-red-600">
