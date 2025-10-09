@@ -42,7 +42,7 @@ export default function AdminLayout({
       {/* Mobile sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="sm" className="md:hidden fixed top-2 left-4 z-40">
+          <Button variant="ghost" size="sm" className="md:hidden fixed top-2 right-4 z-40">
             <Menu className="h-5 w-5" />
           </Button>
         </SheetTrigger>
@@ -52,7 +52,7 @@ export default function AdminLayout({
       </Sheet>
 
       {/* Desktop sidebar */}
-      <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+      <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col ">
         <AdminSidebar />
       </div>
 

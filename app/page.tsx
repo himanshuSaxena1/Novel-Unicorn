@@ -12,7 +12,7 @@ import { Search, TrendingUp, Clock, Star, ArrowRight, BookOpen, Users, Award } f
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
-  
+
   const { data: trendingNovels = [] } = useQuery({
     queryKey: ['trending-novels'],
     queryFn: async () => {
@@ -32,71 +32,74 @@ export default function HomePage() {
   })
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <HeroCarousel />
+    <div className="min-h-screen  bg-background">
+      <div className='max-w-6xl mx-auto'>
 
-      {/* Trending Section */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold flex items-center">
-                <TrendingUp className="mr-3 h-8 w-8 text-green-500" />
-                Trending Now
-              </h2>
-              <p className="text-muted-foreground">Most popular stories this week</p>
-            </div>
-            <Button variant="outline" asChild>
-              <Link href="/browse?section=trending">
-                View All
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+        {/* Hero Section */}
+        <HeroCarousel />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {trendingNovels.slice(0, 5).map((novel: any, index: number) => (
-              <div key={novel.id} className="relative">
-                <Badge className="absolute -top-2 -left-2 z-10 bg-green-500 text-white">
-                  #{index + 1}
-                </Badge>
-                <NovelCard {...novel} />
+        {/* Trending Section */}
+
+        <section className="py-16 px-4 bg-muted/30">
+          <div className="container mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div className="space-y-2">
+                <h2 className="text-xl md:text-3xl font-bold flex items-center">
+                  <TrendingUp className="mr-3 h-6 w-6 text-green-500" />
+                  Trending Now
+                </h2>
+                <p className="text-muted-foreground text-sm">Most popular stories this week</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Recently Updated */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold flex items-center">
-                <Clock className="mr-3 h-8 w-8 text-blue-500" />
-                Recently Updated
-              </h2>
-              <p className="text-muted-foreground">Fresh chapters just released</p>
+              <Button className='text-sm md:text-base' variant="outline" asChild>
+                <Link href="/browse?section=trending">
+                  View All
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
             </div>
-            <Button variant="outline" asChild>
-              <Link href="/browse?section=recent">
-                View All
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {recentNovels.novels?.slice(0, 4).map((novel: any) => (
-              <NovelCard key={novel.id} {...novel} />
-            ))}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
+              {trendingNovels.slice(0, 5).map((novel: any, index: number) => (
+                <div key={novel.id} className="relative">
+                  <Badge className="absolute -top-2 -left-2 z-10 bg-green-500 text-white">
+                    #{index + 1}
+                  </Badge>
+                  <NovelCard {...novel} showDetails={false} />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        {/* Recently Updated */}
+        <section className="py-16 px-4">
+          <div className="container mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div className="space-y-2">
+                <h2 className="text-xl md:text-3xl font-bold flex items-center">
+                  <Clock className="mr-3 h-6 w-6 text-blue-500" />
+                  Recently Updated
+                </h2>
+                <p className="text-muted-foreground">Fresh chapters just released</p>
+              </div>
+              <Button className='text-sm md:text-base' variant="outline" asChild>
+                <Link href="/browse?section=recent">
+                  View All
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
+              {recentNovels.novels?.slice(0, 4).map((novel: any) => (
+                <NovelCard key={novel.id} {...novel} />
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
       {/* Premium CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-primary to-blue-600">
+      <section className="py-8 px-4 bg-gradient-to-r from-primary to-blue-600">
         <div className="container mx-auto text-center text-white">
           <div className="space-y-6 max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold">Unlock Premium Content</h2>

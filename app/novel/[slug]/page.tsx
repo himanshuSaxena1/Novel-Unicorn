@@ -1,11 +1,141 @@
-import React from 'react'
+import Image from "next/image"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { getNovelBySlug } from "@/lib/queries"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { CalendarDays, BookOpen, Eye } from "lucide-react"
 
-const page = () => {
-  return (
-    <div>
-      This is a novel page
-    </div>
-  )
+export default async function NovelPage({ params }: { params: { slug: string } }) {
+    const novel = await getNovelBySlug(params.slug)
+
+    if (!novel) return notFound()
+
+    return (
+        <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+            {/* Header Section */}
+            <div className="grid gap-8 md:grid-cols-[280px,1fr] items-start">
+                {/* Cover */}
+                <div className="flex justify-center md:justify-start">
+                    <div className="relative aspect-[3/4] w-60 overflow-hidden rounded-lg border bg-muted shadow-sm">
+                        <Image
+                            src={
+                                novel.cover ||
+                                "/placeholder.svg?height=400&width=300&query=novel%20cover"
+                            }
+                            alt={`${novel.title} cover`}
+                            width={300}
+                            height={400}
+                            className="h-full w-full object-cover"
+                            priority
+                        />
+                    </div>
+                </div>
+
+                {/* Novel Info */}
+                <div className="space-y-4">
+                    <div>
+                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                            {novel.title}
+                        </h1>
+                        <p className="text-muted-foreground mt-1">
+                            by{" "}
+                            <Link
+                                href={`/author/${novel.author.id}`}
+                                className="text-primary hover:underline"
+                            >
+                                {novel.author.username}
+                            </Link>
+                        </p>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                            <BookOpen className="h-4 w-4" />
+                            <span>{novel.chapters.length} Chapters</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <Eye className="h-4 w-4" />
+                            <span>{novel.views?.toLocaleString() ?? 0} Views</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <CalendarDays className="h-4 w-4" />
+                            <span>
+                                {new Date(novel.createdAt).toLocaleDateString(undefined, {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                })}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Genres & Tags */}
+                    <div className="flex flex-wrap gap-2">
+                        {(novel.genres || []).map((genre: string) => (
+                            <Badge key={genre} variant="secondary">
+                                {genre}
+                            </Badge>
+                        ))}
+                        {(novel.tags || []).slice(0, 4).map((tag: string) => (
+                            <Badge key={tag}>{tag}</Badge>
+                        ))}
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-muted-foreground leading-relaxed">
+                        {novel.description || "No description available."}
+                    </p>
+
+                    {/* Start Reading Button */}
+                    {novel.chapters.length > 0 && (
+                        <Button asChild size="lg" className="mt-4">
+                            <Link href={`/novel/${novel.slug}/chapter/${novel.chapters[0].slug}`}>
+                                Start Reading
+                            </Link>
+                        </Button>
+                    )}
+                </div>
+            </div>
+
+            {/* Chapters Section */}
+            <section className="mt-12 space-y-4">
+                <h2 className="text-2xl font-semibold">Chapters</h2>
+                <Card>
+                    <CardContent className="p-0 divide-y">
+                        {novel.chapters
+                            .filter((c: { isPublished: boolean }) => c.isPublished)
+                            .sort(
+                                (
+                                    a: { order: number },
+                                    b: { order: number }
+                                ) => a.order - b.order
+                            )
+                            .map((chapter: { slug: string; order: number; title: string; views: number }) => (
+                                <Link
+                                    key={chapter.slug}
+                                    href={`/novel/${novel.slug}/chapter/${chapter.slug}`}
+                                    className="group flex items-center justify-between px-4 py-3 transition-colors hover:bg-accent/50"
+                                >
+                                    <div>
+                                        <span className="text-sm text-muted-foreground mr-2">
+                                            #{chapter.order}
+                                        </span>
+                                        <span className="font-medium group-hover:text-primary">
+                                            {chapter.title}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        <Eye className="h-3 w-3" />
+                                        {chapter.views}
+                                    </div>
+                                </Link>
+                            ))}
+                    </CardContent>
+                </Card>
+            </section>
+        </main>
+    )
 }
-
-export default page

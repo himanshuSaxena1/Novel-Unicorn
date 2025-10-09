@@ -19,6 +19,7 @@ import { Switch } from '@/components/ui/switch'
 import { ArrowLeft, Save } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import CursorResizableEditor from '@/components/TiptapEditor'
 
 export default function CreateChapterPage() {
     const router = useRouter()
@@ -165,6 +166,7 @@ export default function CreateChapterPage() {
                                     onChange={(e) => handleInputChange('slug', e.target.value)}
                                     placeholder="chapter-slug"
                                     required
+                                    disabled
                                 />
                                 <p className="text-xs text-muted-foreground">
                                     Auto-generated from title. Used in URL
@@ -238,13 +240,9 @@ export default function CreateChapterPage() {
                     <CardContent>
                         <div className="space-y-2">
                             <Label htmlFor="content">Content *</Label>
-                            <Textarea
-                                id="content"
+                            <CursorResizableEditor
                                 value={formData.content}
-                                onChange={(e) => handleInputChange('content', e.target.value)}
-                                placeholder="Write your chapter content here..."
-                                className="min-h-[400px]"
-                                required
+                                onChange={(value) => handleInputChange('content', value)}
                             />
                             <p className="text-xs text-muted-foreground">
                                 Word count: {formData.content.split(/\s+/).filter(word => word.length > 0).length}

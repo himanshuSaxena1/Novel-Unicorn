@@ -192,7 +192,7 @@ export default function BrowsePage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8">
           {/* Filters Sidebar */}
           {showFilters && (
             <div className="lg:col-span-1">

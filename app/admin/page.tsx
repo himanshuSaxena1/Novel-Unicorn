@@ -45,7 +45,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back! Here's what's happening on your platform.</p>
+        <p className="text-muted-foreground">Welcome back! Here&apos;s what&apos;s happening on your platform.</p>
       </div>
 
       {/* Stats Grid */}
