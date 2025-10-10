@@ -6,11 +6,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CalendarDays, BookOpen, Eye } from "lucide-react"
+import { NovelNotFound } from "@/components/NovelNotFound"
 
 export default async function NovelPage({ params }: { params: { slug: string } }) {
     const novel = await getNovelBySlug(params.slug)
 
-    if (!novel) return notFound()
+    if (!novel) return <NovelNotFound />;
 
     return (
         <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
@@ -73,10 +74,10 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                     </div>
 
                     {/* Genres & Tags */}
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5">
                         {(novel.genres || []).map((genre: string) => (
                             <Badge key={genre} variant="secondary">
-                                {genre}
+                                #{genre}
                             </Badge>
                         ))}
                         {(novel.tags || []).slice(0, 4).map((tag: string) => (
@@ -85,7 +86,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                     </div>
 
                     {/* Description */}
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
                         {novel.description || "No description available."}
                     </p>
 

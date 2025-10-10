@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Search, Plus, MoveHorizontal as MoreHorizontal, CreditCard as Edit, Trash2, Eye, Filter, BookOpen, Users, Star } from 'lucide-react'
+import { DeleteButton } from '@/components/DeleteButton'
 
 export default function AdminNovelsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -235,10 +236,7 @@ export default function AdminNovelsPage() {
                               Add Chapter
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
+                          <DeleteButton novelSlug={novel.slug} />
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

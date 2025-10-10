@@ -25,6 +25,7 @@ import {
   Menu,
   X,
   BookOpenText,
+  List,
 } from 'lucide-react'
 
 export default function Navbar() {
@@ -62,13 +63,14 @@ export default function Navbar() {
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center space-x-2">
             <Link href="/browse">
-              <Button variant="ghost" size="sm">
+              <Button className='flex items-center' variant="ghost" size="sm">
+                <List className="mr-2 h-4 w-4" />
                 Browse
               </Button>
             </Link>
 
             <Link href="/subscription">
-              <Button variant="outline" size="sm" className="flex items-center space-x-1">
+              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
                 <Crown className="h-4 w-4 text-yellow-500" />
                 <span>Premium</span>
               </Button>
@@ -91,7 +93,7 @@ export default function Navbar() {
           ) : session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
                   <User className="h-5 w-5" />
                   <span className="hidden sm:block">{session.user.username}</span>
                 </Button>

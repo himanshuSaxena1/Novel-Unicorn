@@ -98,13 +98,6 @@ export default function BrowsePage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Browse Novels</h1>
-          <p className="text-muted-foreground">
-            Discover your next favorite story from our vast collection
-          </p>
-        </div>
 
         {/* Search and Controls */}
         <div className="mb-8 space-y-4">
@@ -192,10 +185,10 @@ export default function BrowsePage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 relative">
           {/* Filters Sidebar */}
           {showFilters && (
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 absolute right-0 -top-4">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -212,7 +205,7 @@ export default function BrowsePage() {
                         <SelectValue placeholder="All Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Status</SelectItem>
+                        <SelectItem value="allstatus">All Status</SelectItem>
                         {STATUS_OPTIONS.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}

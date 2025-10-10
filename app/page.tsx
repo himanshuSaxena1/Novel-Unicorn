@@ -99,7 +99,7 @@ export default function HomePage() {
         </section>
       </div>
       {/* Premium CTA Section */}
-      <section className="py-8 px-4 bg-gradient-to-r from-primary to-blue-600">
+      <section className="py-8 px-4 bg-gradient-to-r from-primary/70 to-blue-700">
         <div className="container mx-auto text-center text-white">
           <div className="space-y-6 max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold">Unlock Premium Content</h2>

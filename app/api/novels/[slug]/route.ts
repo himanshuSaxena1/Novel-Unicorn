@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getNovelBySlug } from '@/lib/queries'
 import { prisma } from '@/lib/prisma'
+import redis, { CACHE_KEYS } from '@/lib/redis'
 
 export async function GET(
   request: NextRequest,
@@ -85,32 +86,45 @@ export async function DELETE(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    
+    const session = await getServerSession(authOptions);
+
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const novel = await prisma.novel.findUnique({
-      where: { slug: params.slug }
-    })
+      where: { slug: params.slug },
+    });
 
     if (!novel) {
-      return NextResponse.json({ error: 'Novel not found' }, { status: 404 })
+      return NextResponse.json({ error: "Novel not found" }, { status: 404 });
     }
 
-    // Check if user owns the novel or is admin
-    if (novel.authorId !== session.user.id && session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    // Check if user owns the novel or is an admin
+    if (novel.authorId !== session.user.id && session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    // Delete the novel from the database
     await prisma.novel.delete({
-      where: { slug: params.slug }
-    })
+      where: { slug: params.slug },
+    });
 
-    return NextResponse.json({ message: 'Novel deleted successfully' })
+    // 🧹 Invalidate Redis cache
+    try {
+      const cacheKey = CACHE_KEYS.novel(params.slug);
+      await redis.del(cacheKey);
+      console.log(`Cache invalidated for key: ${cacheKey}`);
+    } catch (cacheError) {
+      console.error("Error deleting Redis cache:", cacheError);
+    }
+
+    return NextResponse.json({ message: "Novel deleted successfully" });
   } catch (error) {
-    console.error('Error deleting novel:', error)
-    return NextResponse.json({ error: 'Failed to delete novel' }, { status: 500 })
+    console.error("Error deleting novel:", error);
+    return NextResponse.json(
+      { error: "Failed to delete novel" },
+      { status: 500 }
+    );
   }
 }

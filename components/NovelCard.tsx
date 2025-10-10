@@ -44,9 +44,9 @@ export default function NovelCard({
   if (viewMode === 'list') {
     return (
       <Card className="group hover:shadow-lg transition-all duration-300">
-        <CardContent className="p-6">
+        <CardContent className="p-1.5 xl:p-6">
           <div className="flex space-x-4">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 h-max">
               <div className="w-24 h-32 relative rounded-lg overflow-hidden">
                 <Image
                   src={cover || 'https://images.pexels.com/photos/694740/pexels-photo-694740.jpeg'}
@@ -59,16 +59,16 @@ export default function NovelCard({
 
             <div className="flex-1 space-y-3">
               <div>
-                <h3 className="font-semibold text-base group-hover:text-primary transition-colors">
+                <h3 className="font-semibold text-base leading-6 group-hover:text-primary transition-colors">
                   <Link href={`/novel/${slug}`}>
                     {title}
                   </Link>
                 </h3>
-                <p className="text-sm text-muted-foreground">by {authorName}</p>
+                <p className="text-xs text-muted-foreground">by {authorName}</p>
               </div>
 
               {description && (
-                <p className="text-sm text-muted-foreground line-clamp-2">
+                <p className="text-xs xl:text-sm text-muted-foreground line-clamp-2">
                   {description}
                 </p>
               )}
@@ -87,12 +87,6 @@ export default function NovelCard({
                     {status}
                   </Badge>
                 </div>
-
-                <Button size="sm" asChild>
-                  <Link href={`/novel/${slug}`}>
-                    Read Now
-                  </Link>
-                </Button>
               </div>
             </div>
           </div>
