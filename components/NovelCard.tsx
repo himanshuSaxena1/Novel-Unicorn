@@ -59,7 +59,7 @@ export default function NovelCard({
 
             <div className="flex-1 space-y-3">
               <div>
-                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                <h3 className="font-semibold text-base group-hover:text-primary transition-colors">
                   <Link href={`/novel/${slug}`}>
                     {title}
                   </Link>

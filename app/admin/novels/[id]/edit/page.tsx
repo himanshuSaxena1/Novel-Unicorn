@@ -42,9 +42,7 @@ export default function CreateNovelPage() {
     cover: '',
     status: 'ONGOING',
     genres: [] as string[],
-    tags: [] as string[],
-    isPublished: false,
-    isFeaturing: false,
+    tags: [] as string[]
   })
 
   const handleInputChange = (field: string, value: any) => {
@@ -177,38 +175,6 @@ export default function CreateNovelPage() {
                     <SelectItem value="COMPLETED">Completed</SelectItem>
                     <SelectItem value="HIATUS">Hiatus</SelectItem>
                     <SelectItem value="DROPPED">Dropped</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="feature">Featuring</Label>
-                <Select
-                  value={formData.isFeaturing ? 'YES' : 'NO'}
-                  onValueChange={(value) => handleInputChange('isFeaturing', value === 'YES')}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="YES">YES</SelectItem>
-                    <SelectItem value="NO">NO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="isPublished">Publish</Label>
-                <Select
-                  value={formData.isPublished ? 'YES' : 'NO'}
-                  onValueChange={(value) => handleInputChange('isPublished', value === 'YES')}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="YES">YES</SelectItem>
-                    <SelectItem value="NO">NO</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

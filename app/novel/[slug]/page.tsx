@@ -36,7 +36,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                 {/* Novel Info */}
                 <div className="space-y-4">
                     <div>
-                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                        <h1 className="text-xl md:text-2xl xl:text-3xl font-bold tracking-tight text-foreground">
                             {novel.title}
                         </h1>
                         <p className="text-muted-foreground mt-1">
@@ -105,6 +105,11 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                 <h2 className="text-2xl font-semibold">Chapters</h2>
                 <Card>
                     <CardContent className="p-0 divide-y">
+                        {novel.chapters.lenght === 0 && (
+                            <p className="p-4 text-sm text-muted-foreground">
+                                No chapters available.
+                            </p>
+                        )}
                         {novel.chapters
                             .filter((c: { isPublished: boolean }) => c.isPublished)
                             .sort(

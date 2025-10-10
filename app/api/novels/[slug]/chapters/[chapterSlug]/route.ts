@@ -27,7 +27,7 @@ export async function GET(
       return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
     }
 
-    // Fetch full chapter content (in case getNovelBySlug didn’t include it)
+    // Fetch full chapter content
     const fullChapter = await prisma.chapter.findUnique({
       where: { id: chapterData.id },
       include: {
@@ -39,6 +39,26 @@ export async function GET(
     if (!fullChapter) {
       return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
     }
+
+    // Fetch previous and next chapters based on order
+    const [prevChapter, nextChapter] = await Promise.all([
+      prisma.chapter.findFirst({
+        where: {
+          novelId: novel.id,
+          order: { lt: fullChapter.order }, // Previous chapter has lower order
+        },
+        orderBy: { order: "desc" }, // Get the closest previous chapter
+        select: { slug: true, title: true },
+      }),
+      prisma.chapter.findFirst({
+        where: {
+          novelId: novel.id,
+          order: { gt: fullChapter.order }, // Next chapter has higher order
+        },
+        orderBy: { order: "asc" }, // Get the closest next chapter
+        select: { slug: true, title: true },
+      }),
+    ]);
 
     // Optional: Access control based on subscription tier
     if (fullChapter.accessTier !== "FREE") {
@@ -94,6 +114,12 @@ export async function GET(
         createdAt: fullChapter.createdAt,
         author: fullChapter.author,
       },
+      prev: prevChapter
+        ? { slug: prevChapter.slug, title: prevChapter.title }
+        : null,
+      next: nextChapter
+        ? { slug: nextChapter.slug, title: nextChapter.title }
+        : null,
     });
   } catch (error) {
     console.error("[GET_CHAPTER_ERROR]", error);

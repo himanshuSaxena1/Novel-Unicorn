@@ -24,6 +24,7 @@ import {
   Crown,
   Menu,
   X,
+  BookOpenText,
 } from 'lucide-react'
 
 export default function Navbar() {
@@ -37,7 +38,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left - Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <BookOpen className="h-7 w-7 text-primary" />
+          <BookOpenText className="h-7 w-7 text-primary" />
           <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
             Novel Unicorn
           </span>

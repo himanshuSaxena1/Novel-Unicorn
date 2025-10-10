@@ -148,6 +148,10 @@ model Novel {
   // Categories
   genres      String[]
   tags        String[]
+
+  //Published
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
   
   // SEO
   metaTitle       String?

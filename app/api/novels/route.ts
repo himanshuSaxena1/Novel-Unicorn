@@ -49,6 +49,8 @@ export async function POST(request: NextRequest) {
         genres: data.genres || [],
         tags: data.tags || [],
         authorId: session.user.id,
+        isPublished: data.isPublished || false,
+        isFeatured: data.isFeaturing || false,
         metaTitle: data.metaTitle,
         metaDescription: data.metaDescription
       },

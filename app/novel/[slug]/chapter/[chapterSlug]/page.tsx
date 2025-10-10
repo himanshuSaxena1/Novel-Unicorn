@@ -18,8 +18,9 @@ export default async function ChapterPage({
         if (res.status === 404) return notFound();
         throw new Error("Failed to load chapter");
     }
-
+    
     const { novel, chapter, prev, next } = res.data;
+    
 
 
     return (
@@ -39,7 +40,7 @@ export default async function ChapterPage({
                     <div className="hidden gap-2 md:flex">
                         {prev ? (
                             <Button asChild variant="outline" size="sm">
-                                <Link href={`/novels/${novel.slug}/${prev.slug}`}>Previous</Link>
+                                <Link href={`/novel/${novel.slug}/chapter/${prev.slug}`}>Previous</Link>
                             </Button>
                         ) : (
                             <Button variant="outline" size="sm" disabled>
@@ -48,7 +49,7 @@ export default async function ChapterPage({
                         )}
                         {next ? (
                             <Button asChild size="sm">
-                                <Link href={`/novels/${novel.slug}/${next.slug}`}>Next</Link>
+                                <Link href={`/novel/${novel.slug}/chapter/${next.slug}`}>Next</Link>
                             </Button>
                         ) : (
                             <Button size="sm" disabled>
@@ -62,10 +63,10 @@ export default async function ChapterPage({
                     <RichTextRenderer content={chapter.content} />
                 </ReaderContainer>
 
-                <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-6 md:hidden">
+                <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-6 blcok md:hidden">
                     {prev ? (
                         <Button asChild variant="outline" size="sm">
-                            <Link href={`/novels/${novel.slug}/${prev.slug}`}>Previous</Link>
+                            <Link href={`/novel/${novel.slug}/chapter/${prev.slug}`}>Previous</Link>
                         </Button>
                     ) : (
                         <Button variant="outline" size="sm" disabled>
@@ -74,7 +75,7 @@ export default async function ChapterPage({
                     )}
                     {next ? (
                         <Button asChild size="sm">
-                            <Link href={`/novels/${novel.slug}/${next.slug}`}>Next</Link>
+                            <Link href={`/novel/${novel.slug}/chapter/${next.slug}`}>Next</Link>
                         </Button>
                     ) : (
                         <Button size="sm" disabled>

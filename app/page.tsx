@@ -112,7 +112,7 @@ export default function HomePage() {
                   View Plans
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary" asChild>
+              <Button size="lg" variant="outline" className="border-white text-black dark:hover:bg-black hover:bg-black hover:text-white dark:bg-white" asChild>
                 <Link href="/browse?tier=premium">
                   Browse Premium
                 </Link>
