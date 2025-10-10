@@ -31,6 +31,17 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                             className="h-full w-full object-cover"
                             priority
                         />
+                        {/* Status Badge */}
+                        <Badge
+                            className="absolute top-2 right-2"
+                            variant={novel.status === 'COMPLETED' ? 'default' : 'secondary'}
+                        >
+                            {novel.status}
+                        </Badge>
+                        {/* language Badge */}
+                        <Badge className="absolute top-2 left-2" variant={novel.language === 'KOREAN' ? 'default' : novel.language === 'JAPANESE' ? 'secondary' : 'default'}>
+                            {novel.language}
+                        </Badge>
                     </div>
                 </div>
 

@@ -8,9 +8,14 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user || !canAccessAdminPanel(session.user.role)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (
+          !session?.user ||
+          !canAccessAdminPanel(
+            session.user.role as "USER" | "AUTHOR" | "TRANSLATOR" | "EDITOR" | "MODERATOR" | "ADMIN"
+          )
+        ) {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
 
     // Get current month start
     const currentMonth = new Date()

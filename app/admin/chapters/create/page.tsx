@@ -35,7 +35,9 @@ export default function CreateChapterPage() {
         accessTier: 'FREE',
         isPublished: false,
         metaTitle: '',
-        metaDescription: ''
+        metaDescription: '',
+        priceCoins: 0,
+        isLocked: false
     })
 
     // Fetch novels for selection
@@ -173,22 +175,27 @@ export default function CreateChapterPage() {
                                 </p>
                             </div>
 
+                            <div className="flex items-center space-x-2">
+                                <Switch
+                                    id="published"
+                                    checked={formData.isLocked}
+                                    onCheckedChange={(checked) => handleInputChange('isLocked', checked)}
+                                />
+                                <Label htmlFor="published">Lock Chapter</Label>
+                            </div>
                             <div className="space-y-2">
-                                <Label htmlFor="accessTier">Access Tier</Label>
-                                <Select
-                                    value={formData.accessTier}
-                                    onValueChange={(value) => handleInputChange('accessTier', value)}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="FREE">Free</SelectItem>
-                                        <SelectItem value="SMALL">Small Tier</SelectItem>
-                                        <SelectItem value="MEDIUM">Medium Tier</SelectItem>
-                                        <SelectItem value="PREMIUM">Premium</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <Label htmlFor="accessTier">Chapter Price</Label>
+                                <Input
+                                    id="priceCoins"
+                                    type="number"
+                                    min={0}
+                                    value={formData.priceCoins}
+                                    onChange={(e) => handleInputChange('priceCoins', parseInt(e.target.value, 10))}
+                                    placeholder="Price in coins (0 for free)"
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    Set to 0 for free chapters. Users will need enough coins to access paid chapters.
+                                </p>
                             </div>
 
                             <div className="flex items-center space-x-2">

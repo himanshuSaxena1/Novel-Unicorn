@@ -79,6 +79,9 @@ model User {
   readingProgress ReadingProgress[]
   payments        Payment[]
   reviews         Review[]
+  CoinTransaction CoinTransaction[]
+  ChapterPurchase ChapterPurchase[]
+  ExternalPayment ExternalPayment[]
 
   @@map("users")
 }
@@ -176,13 +179,15 @@ model Novel {
   @@map("novels")
 }
 
+// New fields for Chapter
 model Chapter {
   id           String @id @default(cuid())
   title        String
   slug         String
   content      String @db.Text
   order        Int
-  chapterPrice Float?
+  chapterPrice Float? // legacy USD price
+  priceCoins   Int? // new: price in coins
 
   // Access Control
   accessTier  SubscriptionTier @default(FREE)
@@ -211,6 +216,7 @@ model Chapter {
 
   // Relations
   readingProgress ReadingProgress[]
+  ChapterPurchase ChapterPurchase[]
 
   @@unique([novelId, slug])
   @@map("chapters")
@@ -301,6 +307,54 @@ model SiteSettings {
   @@map("site_settings")
 }
 
+// New: coin transaction log
+model CoinTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int // positive = credit, negative = debit
+  reference String? // optional external id or chapter id
+  metadata  Json?
+  createdAt DateTime @default(now())
+  type       TransactionType
+
+  @@index([userId])
+  @@map("coin_transactions")
+}
+
+model ChapterPurchase {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId  String
+  chapter    Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  novelId    String
+  coinsSpent Int
+  paymentId  String? // optional external payment or invoice id
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, chapterId])
+  @@index([userId])
+  @@map("chapter_purchases")
+}
+
+// Optional: store external fiat payments
+model ExternalPayment {
+  id            String   @id @default(cuid())
+  provider      String   // e.g. "PAYPAL"
+  providerOrder String?  // PayPal order id
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amountUSD     Float
+  coinsGranted  Int
+  status        String
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  @@map("external_payments")
+}
+
 enum UserRole {
   USER
   AUTHOR
@@ -337,4 +391,11 @@ enum PaymentStatus {
   FAILED
   CANCELLED
   REFUNDED
+}
+
+enum TransactionType {
+  PURCHASE
+  EARN
+  SPEND
+  REFUND
 }

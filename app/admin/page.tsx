@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
 import { 
   Users, 
   BookOpen, 
@@ -192,7 +191,6 @@ export default function AdminDashboard() {
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{novel.views.toLocaleString()} views</span>
-                    <Progress value={75} className="w-16 h-2" />
                   </div>
                 </div>
               ))}

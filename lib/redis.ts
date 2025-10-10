@@ -19,8 +19,8 @@ export const CACHE_KEYS = {
 };
 
 export const CACHE_TTL = {
-  short: 300, // 5 minutes
-  medium: 1800, // 30 minutes
-  long: 3600, // 1 hour
-  day: 86400, // 24 hours
+  short: 50, // 5 minutes
+  medium: 50, // 30 minutes
+  long: 50, // 1 hour
+  day: 50, // 24 hours
 };

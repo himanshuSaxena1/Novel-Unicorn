@@ -40,7 +40,8 @@ import {
   Filter,
   FileText,
   Lock,
-  Crown
+  Crown,
+  RefreshCcw
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -56,6 +57,7 @@ export default function AdminChaptersPage() {
   const [accessFilter, setAccessFilter] = useState('ALL')
   const [selectedNovel, setSelectedNovel] = useState('ALL')
   const [page, setPage] = useState(1)
+  const [refreshToggle, setRefreshToggle] = useState(false)
 
   // Fetch chapters
   const { data: chaptersData, isLoading: chaptersLoading, refetch } = useQuery({
@@ -129,6 +131,10 @@ export default function AdminChaptersPage() {
     totalViews: chapters.reduce((sum: number, chapter: any) => sum + (chapter.views || 0), 0)
   }
 
+  function handleRefresh() {
+    setRefreshToggle(true)
+    refetch().finally(() => setRefreshToggle(false))
+  }
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -239,6 +245,11 @@ export default function AdminChaptersPage() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button variant="outline" onClick={handleRefresh}>
+          {
+            refreshToggle ? <RefreshCcw className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />
+          }
+        </Button>
       </div>
 
       {/* Chapters Table */}
@@ -288,8 +299,8 @@ export default function AdminChaptersPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={chapter.isPublished ? 'default' : 'secondary'}>
-                        {chapter.isPublished ? 'Published' : 'Draft'}
+                      <Badge variant={chapter.isLocked ? 'default' : 'secondary'}>
+                        {chapter.isLocked ? 'Published' : 'Draft'}
                       </Badge>
                     </TableCell>
                     <TableCell>{(chapter.views || 0).toLocaleString()}</TableCell>

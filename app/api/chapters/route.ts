@@ -81,6 +81,8 @@ export async function POST(request: NextRequest) {
         wordCount: data.content?.split(/\s+/).length || 0,
         metaTitle: data.metaTitle,
         metaDescription: data.metaDescription,
+        priceCoins: data.priceCoins || 0,
+        isLocked: data.isLocked || false,
       },
       include: {
         novel: { select: { title: true, slug: true } },

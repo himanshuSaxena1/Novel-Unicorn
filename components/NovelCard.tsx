@@ -22,6 +22,7 @@ interface NovelCardProps {
     accessTier: string
   }
   showDetails?: boolean
+  language?: string
 }
 
 export default function NovelCard({
@@ -37,7 +38,8 @@ export default function NovelCard({
   status,
   viewMode = 'grid',
   latestChapter,
-  showDetails
+  showDetails,
+  language,
 }: NovelCardProps) {
   const authorName = typeof author === 'string' ? author : author.username
 
@@ -86,6 +88,9 @@ export default function NovelCard({
                   <Badge variant={status === 'COMPLETED' ? 'default' : 'secondary'}>
                     {status}
                   </Badge>
+                  <Badge variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'outline'}>
+                    {language}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -113,6 +118,10 @@ export default function NovelCard({
             variant={status === 'COMPLETED' ? 'default' : 'secondary'}
           >
             {status}
+          </Badge>
+          {/* Language Badge */}
+          <Badge className="absolute top-2 left-2" variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'default'}>
+            {language}
           </Badge>
 
           {/* Quick Actions */}
