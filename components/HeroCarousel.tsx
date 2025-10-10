@@ -21,6 +21,7 @@ interface Novel {
   genres: string[]
   chapterCount: number
   latestChapter?: { title: string }
+  language: string
 }
 
 export default function HeroCarousel() {
@@ -143,7 +144,10 @@ export default function HeroCarousel() {
                             className="object-cover"
                           />
                           <div className="absolute top-2 right-2">
-                            <Badge className="bg-blue-600 text-white">Featured</Badge>
+                            <Badge className="bg-blue-600 text-white hover:bg-primary-foreground">Featured</Badge>
+                          </div>
+                          <div className="absolute top-2 left-2">
+                            <Badge className="bg-green-600 text-white hover:bg-primary-foreground">{novel.language}</Badge>
                           </div>
                         </div>
                       </div>

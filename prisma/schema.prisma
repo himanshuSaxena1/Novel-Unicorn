@@ -50,238 +50,243 @@ model VerificationToken {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  username  String   @unique
-  password  String?
-  firstName String?
-  lastName  String?
-  avatar    String?
-  role      UserRole @default(USER)
-  
+  id          String   @id @default(cuid())
+  email       String   @unique
+  username    String   @unique
+  password    String?
+  firstName   String?
+  lastName    String?
+  avatar      String?
+  role        UserRole @default(USER)
+  coinBalance Int      @default(0)
+
   // Email verification
   emailVerified DateTime?
-  
+
   // Subscription
   subscriptions UserSubscription[]
-  
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
-  accounts          Account[]
-  sessions          Session[]
-  novels            Novel[]
-  chapters          Chapter[]
-  bookmarks         Bookmark[]
-  readingProgress   ReadingProgress[]
-  payments          Payment[]
-  reviews           Review[]
-  
+  accounts        Account[]
+  sessions        Session[]
+  novels          Novel[]
+  chapters        Chapter[]
+  bookmarks       Bookmark[]
+  readingProgress ReadingProgress[]
+  payments        Payment[]
+  reviews         Review[]
+
   @@map("users")
 }
 
 model UserSubscription {
-  id        String           @id @default(cuid())
-  userId    String
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  planId    String
-  plan      SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  planId String
+  plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
   status    SubscriptionStatus @default(ACTIVE)
-  startDate DateTime         @default(now())
+  startDate DateTime           @default(now())
   endDate   DateTime
-  
+
   // Payment details
   paypalSubscriptionId String?
   stripeSubscriptionId String?
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@map("user_subscriptions")
 }
 
 model SubscriptionPlan {
-  id          String  @id @default(cuid())
+  id          String           @id @default(cuid())
   name        String
   tier        SubscriptionTier @unique
   price       Float
   yearlyPrice Float?
   features    String[]
-  maxChapters Int     @default(-1) // -1 for unlimited
-  isActive    Boolean @default(true)
-  
+  maxChapters Int              @default(-1) // -1 for unlimited
+  isActive    Boolean          @default(true)
+
   // Display
   description String?
   color       String  @default("#3B82F6")
   isPopular   Boolean @default(false)
-  
+
   // Discounts
-  discount    Float   @default(0)
-  
+  discount Float @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
   subscriptions UserSubscription[]
-  
+
   @@map("subscription_plans")
 }
 
 model Novel {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   title       String
-  slug        String   @unique
+  slug        String      @unique
   description String?
   cover       String?
   status      NovelStatus @default(ONGOING)
-  rating      Float?   @default(0)
-  views       Int      @default(0)
-  
+  rating      Float?      @default(0)
+  views       Int         @default(0)
+  novelPrice  Float?
+  language    String      @default("ENGLISH")
+
   // Author
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
   // Categories
-  genres      String[]
-  tags        String[]
+  genres String[]
+  tags   String[]
 
   //Published
-  isPublished Boolean  @default(false)
+  isPublished Boolean   @default(false)
   publishedAt DateTime?
-  
+
   // SEO
   metaTitle       String?
   metaDescription String?
-  
+
   // Featured
-  isFeatured  Boolean @default(false)
-  featuredAt  DateTime?
-  
+  isFeatured Boolean   @default(false)
+  featuredAt DateTime?
+
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  chapters    Chapter[]
-  bookmarks   Bookmark[]
-  reviews     Review[]
-  
+  chapters  Chapter[]
+  bookmarks Bookmark[]
+  reviews   Review[]
+
   @@map("novels")
 }
 
 model Chapter {
-  id       String  @id @default(cuid())
-  title    String
-  slug     String
-  content  String  @db.Text
-  order    Int
-  
+  id           String @id @default(cuid())
+  title        String
+  slug         String
+  content      String @db.Text
+  order        Int
+  chapterPrice Float?
+
   // Access Control
-  accessTier SubscriptionTier @default(FREE)
-  isPublished Boolean @default(false)
-  
+  accessTier  SubscriptionTier @default(FREE)
+  isPublished Boolean          @default(false)
+  isLocked    Boolean          @default(false)
+
   // Novel relation
-  novelId  String
-  novel    Novel   @relation(fields: [novelId], references: [id], onDelete: Cascade)
-  
+  novelId String
+  novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
   // Author
   authorId String
-  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
   // Stats
-  views    Int     @default(0)
-  wordCount Int    @default(0)
-  
+  views     Int @default(0)
+  wordCount Int @default(0)
+
   // SEO
   metaTitle       String?
   metaDescription String?
-  
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
   readingProgress ReadingProgress[]
-  
+
   @@unique([novelId, slug])
   @@map("chapters")
 }
 
 model Review {
-  id      String @id @default(cuid())
-  rating  Int    // 1-5 stars
+  id      String  @id @default(cuid())
+  rating  Int // 1-5 stars
   comment String?
-  
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   novelId String
   novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@unique([userId, novelId])
   @@map("reviews")
 }
 
 model Bookmark {
-  id      String @id @default(cuid())
-  
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   novelId String
   novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
-  
+
   createdAt DateTime @default(now())
-  
+
   @@unique([userId, novelId])
   @@map("bookmarks")
 }
 
 model ReadingProgress {
   id String @id @default(cuid())
-  
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   chapterId String
   chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  
-  progress  Float   @default(0) // 0-100 percentage
-  
+
+  progress Float @default(0) // 0-100 percentage
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@unique([userId, chapterId])
   @@map("reading_progress")
 }
 
 model Payment {
-  id     String        @id @default(cuid())
+  id     String @id @default(cuid())
   amount Float
-  
+
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   subscriptionId String?
-  
+
   // Payment details
   paypalPaymentId String?
   stripePaymentId String?
-  status         PaymentStatus @default(PENDING)
-  
+  status          PaymentStatus @default(PENDING)
+
   // Metadata
   metadata Json?
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@map("payments")
 }
 
@@ -289,10 +294,10 @@ model SiteSettings {
   id    String @id @default(cuid())
   key   String @unique
   value Json
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@map("site_settings")
 }
 

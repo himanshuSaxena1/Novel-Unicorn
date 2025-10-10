@@ -46,7 +46,6 @@ export async function PATCH(
 
     const body = await request.json();
     const data = body.data;
-    console.log("📥 Update data:", data);
 
     const novel = await prisma.novel.findUnique({
       where: { slug: params.slug },

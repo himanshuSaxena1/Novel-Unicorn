@@ -22,6 +22,9 @@ export default function HomePage() {
     }
   })
 
+  console.log(trendingNovels, "Trranding Novels");
+  
+
   const { data: recentNovels = [] } = useQuery({
     queryKey: ['recent-novels'],
     queryFn: async () => {

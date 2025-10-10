@@ -8,7 +8,6 @@ export class NovelAPI {
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
-        console.log("Returning cached novels:", JSON.parse(cached));
         return JSON.parse(cached);
       }
     } catch (error) {
@@ -30,7 +29,6 @@ export class NovelAPI {
       take: limit,
     });
 
-    console.log("Prisma novels:", novels);
 
     if (!novels.length) {
       console.warn("No featured novels found in database");
@@ -45,8 +43,7 @@ export class NovelAPI {
     }));
 
     try {
-      await redis.setex(cacheKey, CACHE_TTL.medium, JSON.stringify(result));
-      console.log("Cached novels:", result);
+      await redis.setex(cacheKey, CACHE_TTL.short, JSON.stringify(result));
     } catch (error) {
       console.error("Redis cache write error:", error);
     }

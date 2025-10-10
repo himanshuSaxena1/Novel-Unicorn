@@ -52,6 +52,8 @@ export default function EditNovelPage() {
     tags: [] as string[],
     isPublished: false,
     isFeaturing: false,
+    language: 'ENGLISH',
+    novelPrice: null as number | null,
   })
 
   // Fetch novel data
@@ -71,6 +73,8 @@ export default function EditNovelPage() {
           tags: data.tags || [],
           isPublished: data.isPublished || false,
           isFeaturing: data.isFeaturing || false,
+          language: data.language || 'ENGLISH',
+          novelPrice: data.novelPrice || null,
         })
       } catch (err) {
         console.error(err)
@@ -111,7 +115,7 @@ export default function EditNovelPage() {
       if (response.status !== 200) throw new Error('Failed to update novel')
 
       toast.success('Novel updated successfully')
-      // router.push('/admin/novels')
+      router.push('/admin/novels')
     } catch (err) {
       console.error(err)
       toast.error('Error updating novel')
@@ -196,36 +200,24 @@ export default function EditNovelPage() {
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className="space-y-2">
-                <Label>Featuring</Label>
-                <Select
-                  value={formData.isFeaturing ? 'YES' : 'NO'}
-                  onValueChange={(v) => handleInputChange('isFeaturing', v === 'YES')}
-                >
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="YES">YES</SelectItem>
-                    <SelectItem value="NO">NO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Publish</Label>
-                <Select
-                  value={formData.isPublished ? 'YES' : 'NO'}
-                  onValueChange={(v) => handleInputChange('isPublished', v === 'YES')}
-                >
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="YES">YES</SelectItem>
-                    <SelectItem value="NO">NO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {
+                formData.status === 'COMPLETED' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="novelPrice">Novel Price</Label>
+                    <Input
+                      type="number"
+                      id="novelPrice"
+                      value={formData.novelPrice || 0}
+                      onChange={(e) => handleInputChange('novelPrice', e.target.value)}
+                      placeholder="Enter novel price"
+                    />
+                  </div>
+                )
+              }
             </CardContent>
           </Card>
+
+
 
           {/* Cover Image */}
           {/* <Card>
@@ -255,79 +247,128 @@ export default function EditNovelPage() {
             </CardContent>
           </Card> */}
           {/* Cover Image */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Cover Image</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Label htmlFor="cover">Cover Image URL</Label>
-              <Input
-                id="cover"
-                value={formData.cover}
-                onChange={(e) => handleInputChange('cover', e.target.value)}
-                placeholder="https://example.com/cover.jpg"
-              />
 
-              {formData.cover && (
-                <div className="aspect-[3/4] w-48 mx-auto relative">
-                  <Image
-                    src={formData.cover}
-                    alt="Cover"
-                    width={300}
-                    height={400}
-                    className="rounded-md border object-cover w-full h-full"
-                  />
-                </div>
-              )}
-
-              {/* Upload Image Section */}
-              <div className="space-y-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  id="upload-file"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-
-                    try {
-                      toast.info('Uploading image...');
-                      setIsSubmitting(true);
-
-                      const { uploadImage } = await import('@/lib/upload-image');
-                      const url = await uploadImage(file, (progress) => {
-                        toast.message(`Uploading: ${progress}%`);
-                      });
-
-                      handleInputChange('cover', url);
-                      toast.success('Image uploaded successfully!');
-                    } catch (err: any) {
-                      console.error(err);
-                      toast.error(err.message || 'Image upload failed');
-                    } finally {
-                      setIsSubmitting(false);
-                    }
-                  }}
+          <div className='flex flex-col gap-3'>
+            <Card>
+              <CardHeader>
+                <CardTitle>Cover Image</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Label htmlFor="cover">Cover Image URL</Label>
+                <Input
+                  id="cover"
+                  value={formData.cover}
+                  onChange={(e) => handleInputChange('cover', e.target.value)}
+                  placeholder="https://example.com/cover.jpg"
                 />
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => document.getElementById('upload-file')?.click()}
-                  disabled={isSubmitting}
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  {isSubmitting ? 'Uploading...' : 'Upload New Cover'}
-                </Button>
-              </div>
+                {formData.cover && (
+                  <div className="aspect-[3/4] w-48 mx-auto relative">
+                    <Image
+                      src={formData.cover}
+                      alt="Cover"
+                      width={300}
+                      height={400}
+                      className="rounded-md border object-cover w-full h-full"
+                    />
+                  </div>
+                )}
 
-              <p className="text-xs text-muted-foreground text-center">
-                Recommended size: 300x400px (3:4 ratio)
-              </p>
-            </CardContent>
-          </Card>
+                {/* Upload Image Section */}
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="upload-file"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      try {
+                        toast.info('Uploading image...');
+                        setIsSubmitting(true);
+
+                        const { uploadImage } = await import('@/lib/upload-image');
+                        const url = await uploadImage(file, (progress) => {
+                          toast.message(`Uploading: ${progress}%`);
+                        });
+
+                        handleInputChange('cover', url);
+                        toast.success('Image uploaded successfully!');
+                      } catch (err: any) {
+                        console.error(err);
+                        toast.error(err.message || 'Image upload failed');
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }}
+                  />
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => document.getElementById('upload-file')?.click()}
+                    disabled={isSubmitting}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {isSubmitting ? 'Uploading...' : 'Upload New Cover'}
+                  </Button>
+                </div>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  Recommended size: 300x400px (3:4 ratio)
+                </p>
+              </CardContent>
+            </Card>
+            <div className="space-y-2">
+              <Label htmlFor="feature">Select Language</Label>
+              <Select
+                value={formData.language}
+                onValueChange={(value) => handleInputChange('language', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ENGLISH">ENGLISH</SelectItem>
+                  <SelectItem value="JAPANESE">JAPANESE</SelectItem>
+                  <SelectItem value="CHINESE">CHINESE</SelectItem>
+                  <SelectItem value="KOREAN">KOREAN</SelectItem>
+                  <SelectItem value="OTHER">OTHER</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Featuring</Label>
+              <Select
+                value={formData.isFeaturing ? 'YES' : 'NO'}
+                onValueChange={(v) => handleInputChange('isFeaturing', v === 'YES')}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="YES">YES</SelectItem>
+                  <SelectItem value="NO">NO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Publish</Label>
+              <Select
+                value={formData.isPublished ? 'YES' : 'NO'}
+                onValueChange={(v) => handleInputChange('isPublished', v === 'YES')}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="YES">YES</SelectItem>
+                  <SelectItem value="NO">NO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
         </div>
 
         {/* Genres */}

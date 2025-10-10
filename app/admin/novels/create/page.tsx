@@ -18,6 +18,7 @@ import {
 import { X, Plus, Upload, Save, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 const GENRE_OPTIONS = [
   'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller', 'Horror',
@@ -45,6 +46,8 @@ export default function CreateNovelPage() {
     tags: [] as string[],
     isPublished: false,
     isFeaturing: false,
+    language: 'ENGLISH',
+    novelPrice: null as number | null,
   })
 
   const handleInputChange = (field: string, value: any) => {
@@ -181,42 +184,27 @@ export default function CreateNovelPage() {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="feature">Featuring</Label>
-                <Select
-                  value={formData.isFeaturing ? 'YES' : 'NO'}
-                  onValueChange={(value) => handleInputChange('isFeaturing', value === 'YES')}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="YES">YES</SelectItem>
-                    <SelectItem value="NO">NO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {
+                formData.status === 'COMPLETED' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="novelPrice">Novel Price</Label>
+                    <Input
+                      type="number"
+                      id="novelPrice"
+                      value={formData.novelPrice || 0}
+                      onChange={(e) => handleInputChange('novelPrice', e.target.value)}
+                      placeholder="Enter novel price"
+                    />
+                  </div>
+                )
+              }
 
-              <div className="space-y-2">
-                <Label htmlFor="isPublished">Publish</Label>
-                <Select
-                  value={formData.isPublished ? 'YES' : 'NO'}
-                  onValueChange={(value) => handleInputChange('isPublished', value === 'YES')}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="YES">YES</SelectItem>
-                    <SelectItem value="NO">NO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
             </CardContent>
           </Card>
 
           {/* Cover Image */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Cover Image</CardTitle>
             </CardHeader>
@@ -252,7 +240,136 @@ export default function CreateNovelPage() {
                 Recommended size: 300x400px (3:4 ratio)
               </p>
             </CardContent>
-          </Card>
+          </Card> */}
+
+          <div className='flex flex-col gap-3'>
+            <Card>
+              <CardHeader>
+                <CardTitle>Cover Image</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Label htmlFor="cover">Cover Image URL</Label>
+                <Input
+                  id="cover"
+                  value={formData.cover}
+                  onChange={(e) => handleInputChange('cover', e.target.value)}
+                  placeholder="https://example.com/cover.jpg"
+                />
+
+                {formData.cover && (
+                  <div className="aspect-[3/4] w-48 mx-auto relative">
+                    <Image
+                      src={formData.cover}
+                      alt="Cover"
+                      width={300}
+                      height={400}
+                      className="rounded-md border object-cover w-full h-full"
+                    />
+                  </div>
+                )}
+
+                {/* Upload Image Section */}
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="upload-file"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      try {
+                        toast.loading('Uploading image...');
+                        setIsSubmitting(true);
+
+                        const { uploadImage } = await import('@/lib/upload-image');
+                        const url = await uploadImage(file, (progress) => {
+                          toast.loading(`Uploading: ${progress}%`);
+                        });
+
+                        handleInputChange('cover', url);
+                        toast.success('Image uploaded successfully!');
+                      } catch (err: any) {
+                        console.error(err);
+                        toast.error(err.message || 'Image upload failed');
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }}
+                  />
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => document.getElementById('upload-file')?.click()}
+                    disabled={isSubmitting}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {isSubmitting ? 'Uploading...' : 'Upload New Cover'}
+                  </Button>
+                </div>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  Recommended size: 300x400px (3:4 ratio)
+                </p>
+              </CardContent>
+            </Card>
+
+            <div className="space-y-2">
+              <Label htmlFor="feature">Select Language</Label>
+              <Select
+                value={formData.language}
+                onValueChange={(value) => handleInputChange('language', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ENGLISH">ENGLISH</SelectItem>
+                  <SelectItem value="JAPANESE">JAPANESE</SelectItem>
+                  <SelectItem value="CHINESE">CHINESE</SelectItem>
+                  <SelectItem value="KOREAN">KOREAN</SelectItem>
+                  <SelectItem value="OTHER">OTHER</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="feature">Featuring</Label>
+              <Select
+                value={formData.isFeaturing ? 'YES' : 'NO'}
+                onValueChange={(value) => handleInputChange('isFeaturing', value === 'YES')}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="YES">YES</SelectItem>
+                  <SelectItem value="NO">NO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+
+
+            <div className="space-y-2">
+              <Label htmlFor="isPublished">Publish</Label>
+              <Select
+                value={formData.isPublished ? 'YES' : 'NO'}
+                onValueChange={(value) => handleInputChange('isPublished', value === 'YES')}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="YES">YES</SelectItem>
+                  <SelectItem value="NO">NO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
 
         {/* Genres */}

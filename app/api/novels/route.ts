@@ -51,6 +51,8 @@ export async function POST(request: NextRequest) {
         authorId: session.user.id,
         isPublished: data.isPublished || false,
         isFeatured: data.isFeaturing || false,
+        novelPrice: data.novelPrice || null,
+        language: data.language || 'ENGLISH',
         metaTitle: data.metaTitle,
         metaDescription: data.metaDescription
       },
