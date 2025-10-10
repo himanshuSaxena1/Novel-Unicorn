@@ -225,7 +225,7 @@ export default function AdminNovelsPage() {
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
-                            <Link href={`/admin/novels/${novel.id}/edit`}>
+                            <Link href={`/admin/novels/${novel.slug}/edit`}>
                               <Edit className="mr-2 h-4 w-4" />
                               Edit
                             </Link>
