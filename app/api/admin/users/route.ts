@@ -69,8 +69,6 @@ export async function GET(request: NextRequest) {
       }),
       prisma.user.count({ where })
     ])
-
-    console.log(`Fetched ${users} users out of ${total}`);
     
 
     return NextResponse.json({

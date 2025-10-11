@@ -2,21 +2,25 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import Providers from '@/components/Providers'
-import { SafeToaster } from '@/components/SafeToaster'
-import NavbarWrapper from '@/components/NavbarWrapper'
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body className={inter.className}>
-        <Providers>
-           <NavbarWrapper />
-          <main>{children}</main>
-          <SafeToaster />
-        </Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers>
+            <main>{children}</main>
+          </Providers>
+        </ThemeProvider>
       </body>
-    </html>
+    </html >
   )
 }

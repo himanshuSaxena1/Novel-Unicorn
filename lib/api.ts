@@ -1,5 +1,8 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import redis, { CACHE_KEYS, CACHE_TTL } from "@/lib/redis";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 
 export class NovelAPI {
   static async getFeaturedNovels(limit = 8) {
@@ -28,7 +31,6 @@ export class NovelAPI {
       orderBy: { featuredAt: "desc" },
       take: limit,
     });
-
 
     if (!novels.length) {
       console.warn("No featured novels found in database");
@@ -267,5 +269,91 @@ export class AdminAPI {
     ]);
 
     return { recentUsers, recentNovels, recentPayments };
+  }
+}
+
+export async function getChapter(slug: string, chapterSlug: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
+    const novel = await prisma.novel.findFirst({
+      where: {
+        slug,
+      },
+    });
+
+    if (!novel) {
+      return NextResponse.json({ error: "Novel not found" }, { status: 404 });
+    }
+
+    const chapterData = await prisma.chapter.findFirst({
+      where: {
+        slug: chapterSlug,
+        novelId: novel.id,
+      },
+    });
+
+    if (!chapterData) {
+      return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
+    }
+
+    const chapter = await prisma.chapter.findUnique({
+      where: { id: chapterData.id },
+      include: {
+        novel: { select: { id: true, title: true, slug: true } },
+        author: { select: { id: true, username: true } },
+      },
+    });
+
+    if (!chapter) {
+      return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
+    }
+
+    const [prev, next, userChapters] = await Promise.all([
+      prisma.chapter.findFirst({
+        where: { novelId: novel.id, order: { lt: chapter.order } },
+        orderBy: { order: "desc" },
+        select: { slug: true, title: true },
+      }),
+      prisma.chapter.findFirst({
+        where: { novelId: novel.id, order: { gt: chapter.order } },
+        orderBy: { order: "asc" },
+        select: { slug: true, title: true },
+      }),
+      userId
+        ? prisma.chapterPurchase.findFirst({
+            where: { chapterId: chapter.id, userId },
+          })
+        : null,
+    ]);
+
+    // Clear chapter cache
+    await redis.del(CACHE_KEYS.chapter(slug, chapterSlug));
+
+    // Check if the user owns the chapter
+    const isOwnedByUser = userId && userChapters !== null;
+    const isLocked = chapter.isLocked && !isOwnedByUser;
+
+    return NextResponse.json({
+      novel,
+      chapter: {
+        id: chapter.id,
+        title: chapter.title,
+        slug: chapter.slug,
+        order: chapter.order,
+        content: isLocked ? null : chapter.content,
+        priceCoins: chapter.priceCoins,
+        isLocked,
+      },
+      prev,
+      next,
+    });
+  } catch (error) {
+    console.error("[GET_CHAPTER_ERROR]", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

@@ -1,9 +1,10 @@
-import { NextAuthOptions } from 'next-auth'
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import GoogleProvider from 'next-auth/providers/google'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
+import { NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
+import { UserRole } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -13,28 +14,40 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
-      name: 'credentials',
+      name: "credentials",
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new Error("Missing credentials");
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
-        })
+          where: { email: credentials.email },
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            password: true,
+            role: true,
+            avatar: true,
+            coinBalance: true,
+          },
+        });
 
         if (!user || !user.password) {
-          return null
+          return null;
         }
 
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
 
         if (!isPasswordValid) {
-          return null
+          throw new Error("Invalid email or password");
         }
 
         return {
@@ -43,58 +56,68 @@ export const authOptions: NextAuthOptions = {
           username: user.username,
           role: user.role,
           avatar: user.avatar ?? undefined,
-        }
-      }
-    })
+          coinBalance: user.coinBalance,
+        };
+      },
+    }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: 'jwt'
+    strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.role = user.role
-        token.username = user.username
+        token.role = user.role;
+        token.username = user.username;
+        token.coinBalance = user.coinBalance;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.sub!
-        session.user.role = token.role as string
-        session.user.username = token.username as string
+        session.user.id = token.sub!;
+        session.user.role = token.role as UserRole;
+        session.user.username = token.username as string;
+        session.user.coinBalance = token.coinBalance as number;
       }
-      return session
+      return session;
     },
     async signIn({ user, account, profile }) {
-      if (account?.provider === 'google') {
+
+      if (account?.provider === "google") {
         try {
           const existingUser = await prisma.user.findUnique({
-            where: { email: user.email! }
-          })
+            where: { email: user.email! },
+          });
 
           if (!existingUser) {
             await prisma.user.create({
               data: {
                 email: user.email!,
-                username: user.name?.replace(/\s+/g, '').toLowerCase() || user.email!.split('@')[0],
-                firstName: user.name?.split(' ')[0],
-                lastName: user.name?.split(' ').slice(1).join(' '),
+                username:
+                  user.name?.replace(/\s+/g, "").toLowerCase() ||
+                  user.email!.split("@")[0],
+                firstName: user.name?.split(" ")[0],
+                lastName: user.name?.split(" ").slice(1).join(" "),
                 avatar: user.image,
-                role: 'USER',
-                emailVerified: new Date()
-              }
-            })
+                role: "USER",
+                emailVerified: new Date(),
+                coinBalance: 0,
+              },
+            });
           }
         } catch (error) {
-          console.error('Error creating user:', error)
-          return false
+          console.error("Error creating user:", error);
+          return false;
         }
       }
-      return true
-    }
+      return true;
+    },
   },
   pages: {
-    signIn: '/auth/signin',
-  }
-}
+    signIn: "/auth/signin",
+  },
+  // Debug mode to log more details
+  debug: process.env.NODE_ENV === "development",
+};

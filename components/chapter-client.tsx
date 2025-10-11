@@ -56,7 +56,7 @@ export function ChapterClient({ data }: { data: any }) {
                 }
             } else if (err.response?.data?.error === "Insufficient coins") {
                 toast.error("You don’t have enough coins. Please recharge first.");
-                router.push("/subscription");
+                router.push("");
             } else {
                 console.error("Unlock failed", err);
                 toast.error("Failed to unlock chapter. Please try again.");

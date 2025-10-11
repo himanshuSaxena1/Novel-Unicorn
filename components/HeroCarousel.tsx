@@ -80,7 +80,6 @@ export default function HeroCarousel() {
       emblaApi.scrollNext()
     }, 5000)
     return () => {
-      console.log("Auto-scroll stopped")
       clearInterval(id)
     }
   }, [emblaApi, slides.length])
@@ -119,7 +118,6 @@ export default function HeroCarousel() {
       <div className="embla overflow-hidden" ref={emblaRef}>
         <div className="embla__container flex h-[600px]">
           {slides.map((novel: Novel, index: number) => {
-            console.log("Rendering slide:", { index, id: novel.id, title: novel.title })
             return (
               <div key={novel.slug ?? novel.id} className="embla__slide relative flex-[0_0_100%] min-w-0 w-full">
                 <div className="absolute inset-0">

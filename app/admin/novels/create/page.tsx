@@ -93,7 +93,6 @@ export default function CreateNovelPage() {
       }
 
       const novel = await response.json()
-      console.log('Novel created:', novel)
 
       router.push('/admin/novels')
     } catch (error) {

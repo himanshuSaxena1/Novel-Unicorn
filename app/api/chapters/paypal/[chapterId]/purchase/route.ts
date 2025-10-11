@@ -40,6 +40,7 @@ export async function POST(
     const existing = await prisma.chapterPurchase.findFirst({
       where: { chapterId, userId },
     });
+    
     if (existing)
       return NextResponse.json({ error: "Already purchased" }, { status: 400 });
 
@@ -47,6 +48,7 @@ export async function POST(
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user)
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+
     const cost = chapter.priceCoins || 50;
     if (user.coinBalance < cost) {
       return NextResponse.json(
@@ -56,31 +58,40 @@ export async function POST(
     }
 
     // Transaction: deduct coins + create purchase + add to user's chapters
-    await prisma.$transaction([
-      prisma.user.update({
+    let chapterPurchaseId: string;
+    await prisma.$transaction(async (tx) => {
+      // Step 1: Deduct coins from user
+      await tx.user.update({
         where: { id: userId },
         data: { coinBalance: { decrement: cost } },
-      }),
-      prisma.chapterPurchase.create({
+      });
+
+      // Step 2: Create chapter purchase and capture the ID
+      const chapterPurchase = await tx.chapterPurchase.create({
         data: { userId, chapterId, novelId: chapter.novelId, coinsSpent: cost },
-      }),
-      prisma.coinTransaction.create({
+      });
+      chapterPurchaseId = chapterPurchase.id;
+
+      // Step 3: Record the coin transaction
+      await tx.coinTransaction.create({
         data: {
           userId,
           amount: -cost,
           reference: chapterId,
           type: "SPEND",
         },
-      }),
-      prisma.user.update({
+      });
+
+      // Step 4: Connect the chapter purchase to the user (using the captured ID)
+      await tx.user.update({
         where: { id: userId },
         data: {
-          chapters: {
-            connect: { id: chapterId },
+          ChapterPurchase: {
+            connect: { id: chapterPurchaseId }, // Correctly use ChapterPurchase ID
           },
         },
-      }),
-    ]);
+      });
+    });
 
     // Clear both novel and chapter caches
     await Promise.all([

@@ -26,6 +26,7 @@ import {
   X,
   BookOpenText,
   List,
+  CirclePoundSterling,
 } from 'lucide-react'
 
 export default function Navbar() {
@@ -69,12 +70,14 @@ export default function Navbar() {
               </Button>
             </Link>
 
-            <Link href="/subscription">
-              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
-                <Crown className="h-4 w-4 text-yellow-500" />
-                <span>Premium</span>
-              </Button>
-            </Link>
+            {
+              session?.user && (
+                <Link href="/subscription" className='flex items-center gap-1'>
+                    <CirclePoundSterling className="h-4 w-4 text-yellow-600" />
+                    {session?.user.coinBalance}
+                </Link>
+              )
+            }
           </div>
 
           {/* Theme Toggle */}
@@ -94,6 +97,7 @@ export default function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="flex items-center space-x-2">
+
                   <User className="h-5 w-5" />
                   <span className="hidden sm:block">{session.user.username}</span>
                 </Button>

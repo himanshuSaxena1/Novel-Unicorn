@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getNovelBySlug } from "@/lib/queries";
 import redis, { CACHE_KEYS } from "@/lib/redis";
 
 export async function GET(
@@ -15,12 +14,23 @@ export async function GET(
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
-    const novel = await getNovelBySlug(slug, userId);
+    const novel = await prisma.novel.findFirst({
+      where: {
+        slug,
+      },
+    });
+
     if (!novel) {
       return NextResponse.json({ error: "Novel not found" }, { status: 404 });
     }
 
-    const chapterData = novel.chapters.find((c: any) => c.slug === chapterSlug);
+    const chapterData = await prisma.chapter.findFirst({
+      where: {
+        slug: chapterSlug,
+        novelId: novel.id, 
+      },
+    });
+
     if (!chapterData) {
       return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
     }
@@ -37,6 +47,8 @@ export async function GET(
       return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
     }
 
+
+    
     const [prev, next, userChapters] = await Promise.all([
       prisma.chapter.findFirst({
         where: { novelId: novel.id, order: { lt: chapter.order } },
@@ -49,9 +61,8 @@ export async function GET(
         select: { slug: true, title: true },
       }),
       userId
-        ? prisma.user.findUnique({
-            where: { id: userId },
-            select: { chapters: { where: { id: chapter.id } } },
+        ? prisma.chapterPurchase.findFirst({
+            where: { chapterId: chapter.id, userId }, 
           })
         : null,
     ]);
@@ -60,7 +71,7 @@ export async function GET(
     await redis.del(CACHE_KEYS.chapter(slug, chapterSlug));
 
     // Check if the user owns the chapter
-    const isOwnedByUser = userId && userChapters && userChapters.chapters.length > 0;
+    const isOwnedByUser = userId && userChapters !== null;
     const isLocked = chapter.isLocked && !isOwnedByUser;
 
     return NextResponse.json({

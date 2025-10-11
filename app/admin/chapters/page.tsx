@@ -41,9 +41,11 @@ import {
   FileText,
   Lock,
   Crown,
-  RefreshCcw
+  RefreshCcw,
+  CoinsIcon
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import api from '@/lib/axios'
 
 const ACCESS_TIER_COLORS = {
   FREE: 'bg-green-500',
@@ -72,9 +74,10 @@ export default function AdminChaptersPage() {
       if (accessFilter !== 'ALL') params.set('accessTier', accessFilter)
       if (selectedNovel !== 'ALL') params.set('novelId', selectedNovel)
 
-      const response = await fetch(`/api/admin/chapters?${params}`)
-      if (!response.ok) throw new Error('Failed to fetch chapters')
-      return response.json()
+      const response = await api.get(`/admin/chapters?${params}`)
+      if (response.status !== 200) throw new Error('Failed to fetch chapters')
+
+      return response.data
     }
   })
 
@@ -82,10 +85,9 @@ export default function AdminChaptersPage() {
   const { data: novels = [] } = useQuery({
     queryKey: ['novels-list'],
     queryFn: async () => {
-      const response = await fetch('/api/novels?limit=100')
-      if (!response.ok) throw new Error('Failed to fetch novels')
-      const data = await response.json()
-      return data.novels || []
+      const response = await api.get('/novels?limit=100')
+      if (response.status !== 200) throw new Error('Failed to fetch novels')
+      return response.data.novels || []
     }
   })
 
@@ -93,11 +95,9 @@ export default function AdminChaptersPage() {
     if (!confirm('Are you sure you want to delete this chapter?')) return
 
     try {
-      const response = await fetch(`/api/chapters/${chapterId}`, {
-        method: 'DELETE'
-      })
+      const response = await api.delete(`/api/chapters/${chapterId}`)
 
-      if (!response.ok) throw new Error('Failed to delete chapter')
+      if (response.status !== 200) throw new Error('Failed to delete chapter')
 
       toast.success('Chapter deleted successfully')
       refetch()
@@ -293,9 +293,7 @@ export default function AdminChaptersPage() {
                     <TableCell>#{chapter.order}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <div className={`w-2 h-2 rounded-full ${ACCESS_TIER_COLORS[chapter.accessTier as keyof typeof ACCESS_TIER_COLORS]}`} />
-                        <span>{chapter.accessTier}</span>
-                        {chapter.accessTier !== 'FREE' && <Lock className="h-3 w-3" />}
+                        {chapter.priceCoins > 0 ? <span className='flex items-center gap-1'><CoinsIcon className="w-4 h-4 text-yellow-600" />{chapter.priceCoins}</span> : "FREE"} 
                       </div>
                     </TableCell>
                     <TableCell>
