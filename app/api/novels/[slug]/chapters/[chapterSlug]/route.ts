@@ -37,7 +37,7 @@ export async function GET(
       return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
     }
 
-    const [prev, next, purchased] = await Promise.all([
+    const [prev, next, userChapters] = await Promise.all([
       prisma.chapter.findFirst({
         where: { novelId: novel.id, order: { lt: chapter.order } },
         orderBy: { order: "desc" },
@@ -49,8 +49,9 @@ export async function GET(
         select: { slug: true, title: true },
       }),
       userId
-        ? prisma.chapterPurchase.findFirst({
-            where: { userId, chapterId: chapter.id },
+        ? prisma.user.findUnique({
+            where: { id: userId },
+            select: { chapters: { where: { id: chapter.id } } },
           })
         : null,
     ]);
@@ -58,25 +59,9 @@ export async function GET(
     // Clear chapter cache
     await redis.del(CACHE_KEYS.chapter(slug, chapterSlug));
 
-    // Use getNovelBySlug's isLocked, with fallback purchase check
-    const isLocked = chapterData.isLocked && !purchased;
-
-    if (!isLocked) {
-      return NextResponse.json({
-        novel,
-        chapter: {
-          id: chapter.id,
-          title: chapter.title,
-          slug: chapter.slug,
-          order: chapter.order,
-          content: chapter.content,
-          priceCoins: chapter.priceCoins,
-          isLocked: false,
-        },
-        prev,
-        next,
-      });
-    }
+    // Check if the user owns the chapter
+    const isOwnedByUser = userId && userChapters && userChapters.chapters.length > 0;
+    const isLocked = chapter.isLocked && !isOwnedByUser;
 
     return NextResponse.json({
       novel,
@@ -85,8 +70,9 @@ export async function GET(
         title: chapter.title,
         slug: chapter.slug,
         order: chapter.order,
+        content: isLocked ? null : chapter.content,
         priceCoins: chapter.priceCoins,
-        isLocked: true,
+        isLocked,
       },
       prev,
       next,

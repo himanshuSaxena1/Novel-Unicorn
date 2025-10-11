@@ -18,19 +18,13 @@ export async function POST(
     const { chapterId } = await params;
 
     const chapter = await prisma.chapter.findUnique({
-      where: {
-        id: chapterId,
-      },
+      where: { id: chapterId },
       select: {
         isLocked: true,
         priceCoins: true,
         slug: true,
         novelId: true,
-        novel: {
-          select: {
-            slug: true,
-          },
-        },
+        novel: { select: { slug: true } },
       },
     });
 
@@ -61,7 +55,7 @@ export async function POST(
       );
     }
 
-    // Transaction: deduct coins + create purchase
+    // Transaction: deduct coins + create purchase + add to user's chapters
     await prisma.$transaction([
       prisma.user.update({
         where: { id: userId },
@@ -76,6 +70,14 @@ export async function POST(
           amount: -cost,
           reference: chapterId,
           type: "SPEND",
+        },
+      }),
+      prisma.user.update({
+        where: { id: userId },
+        data: {
+          chapters: {
+            connect: { id: chapterId },
+          },
         },
       }),
     ]);

@@ -27,7 +27,7 @@ const DEFAULT_PREFS: ReaderPrefs = {
     font: "serif",
     fontSize: 18,
     lineHeight: 1.6,
-    width: "normal",
+    width: "wide",
 }
 
 const MIN_FONT = 14

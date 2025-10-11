@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn, getSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,6 +14,9 @@ import toast from 'react-hot-toast'
 
 export default function SignInPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/'
+
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -29,14 +32,15 @@ export default function SignInPage() {
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
-        redirect: false
+        redirect: false,
+        callbackUrl,
       })
 
       if (result?.error) {
         toast.error('Invalid credentials')
       } else {
         toast.success('Welcome back!')
-        router.push('/')
+        router.push(callbackUrl)
         router.refresh()
       }
     } catch (error) {
@@ -49,7 +53,7 @@ export default function SignInPage() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     try {
-      await signIn('google', { callbackUrl: '/' })
+      await signIn('google', { callbackUrl })
     } catch (error) {
       toast.error('Failed to sign in with Google')
       setIsLoading(false)
@@ -73,7 +77,7 @@ export default function SignInPage() {
             Sign in to your account to continue reading
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -91,7 +95,7 @@ export default function SignInPage() {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -114,18 +118,18 @@ export default function SignInPage() {
                 </button>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between">
               <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
                 Forgot password?
               </Link>
             </div>
-            
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
-          
+
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <Separator className="w-full" />
@@ -134,7 +138,7 @@ export default function SignInPage() {
               <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
-          
+
           <Button
             type="button"
             variant="outline"
@@ -162,10 +166,10 @@ export default function SignInPage() {
             </svg>
             Continue with Google
           </Button>
-          
+
           <div className="text-center text-sm">
             Don&apos;t have an account?{' '}
-            <Link href="/auth/signup" className="text-primary hover:underline">
+            <Link href={`/auth/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-primary hover:underline">
               Sign up
             </Link>
           </div>

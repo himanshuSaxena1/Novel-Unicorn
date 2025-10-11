@@ -130,7 +130,6 @@ export async function DELETE(
     try {
       const cacheKey = CACHE_KEYS.novel(params.slug);
       await redis.del(cacheKey);
-      console.log(`Cache invalidated for key: ${cacheKey}`);
     } catch (cacheError) {
       console.error("Error deleting Redis cache:", cacheError);
     }

@@ -16,52 +16,53 @@ export function ChapterClient({ data }: { data: any }) {
     const router = useRouter();
     const { novel, chapter, prev, next } = data;
     const [locked, setLocked] = useState(chapter.isLocked);
+    const [unlocking, setUnlocking] = useState(false);
     const { data: session, status } = useSession()
 
     const handleUnlock = async () => {
         if (!session) {
             toast.error("Please log in to unlock this chapter.");
-            router.push("/login?callbackUrl=" + encodeURIComponent(window.location.pathname));
+            router.push("/auth/signin?callbackUrl=" + encodeURIComponent(window.location.pathname));
             return;
         }
 
         try {
+            setUnlocking(true);
             const res = await api.post(`/chapters/paypal/${chapter.id}/purchase`);
             if (res.data.success) {
                 toast.success("Chapter unlocked! Enjoy reading.");
-
-                // ✅ Option 1: Use the unlocked data if backend returns it
                 if (res.data.unlocked) {
                     setLocked(false);
                     chapter.content = res.data.unlocked.content;
                     return;
                 }
-
-                // ✅ Option 2: Refetch chapter content
                 const chapterRes = await api.get(`/novels/${novel.slug}/chapters/${chapter.slug}`);
                 if (chapterRes.data.chapter && !chapterRes.data.chapter.isLocked) {
-                    chapter.content = chapterRes.data.chapter.content;
                     setLocked(false);
+                    chapter.content = chapterRes.data.chapter.content;
                 } else {
                     toast.error("Failed to unlock chapter. Please refresh or contact support.");
                 }
             }
         } catch (err: any) {
             if (err.response?.data?.error === "Already purchased") {
+                toast.success("You have already purchased this chapter.");
                 const chapterRes = await api.get(`/novels/${novel.slug}/chapters/${chapter.slug}`);
                 if (chapterRes.data.chapter && !chapterRes.data.chapter.isLocked) {
-                    chapter.content = chapterRes.data.chapter.content;
                     setLocked(false);
+                    chapter.content = chapterRes.data.chapter.content;
                 } else {
                     toast.error("Chapter is still locked. Please contact support.");
                 }
             } else if (err.response?.data?.error === "Insufficient coins") {
                 toast.error("You don’t have enough coins. Please recharge first.");
-                router.push("/coins");
+                router.push("/subscription");
             } else {
                 console.error("Unlock failed", err);
                 toast.error("Failed to unlock chapter. Please try again.");
             }
+        } finally {
+            setUnlocking(false);
         }
     };
 
@@ -116,7 +117,7 @@ export function ChapterClient({ data }: { data: any }) {
                                 onClick={handleUnlock}
                                 className="px-8 py-3 text-base font-medium transition-all hover:scale-[1.03]"
                             >
-                                Unlock for {chapter.priceCoins || 50} Coins
+                                {unlocking ? "Unlocking..." : `Unlock for ${chapter.priceCoins || 50} Coins`}
                             </Button>
 
                             {!session && (

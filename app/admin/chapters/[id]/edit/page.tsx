@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -22,26 +22,64 @@ import toast from 'react-hot-toast'
 import CursorResizableEditor from '@/components/TiptapEditor'
 import api from '@/lib/axios'
 
-export default function CreateChapterPage() {
+export default function UpdateChapterPage({ params }: { params: { id: string } }) {
     const router = useRouter()
-    const searchParams = useSearchParams()
-    const preselectedNovelId = searchParams.get('novelId')
+    const chapterId = params.id
 
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [formData, setFormData] = useState({
         title: '',
         slug: '',
         content: '',
-        novelId: preselectedNovelId || '',
+        novelId: '',
         accessTier: 'FREE',
         isPublished: false,
         metaTitle: '',
         metaDescription: '',
         priceCoins: 0,
-        isLocked: false
+        isLocked: false,
     })
 
-    // Fetch novels for selection
+    // Fetch chapter data using useEffect
+    useEffect(() => {
+        const fetchChapter = async () => {
+            if (!chapterId) {
+                toast.error('Chapter ID is missing. Redirecting to chapters list.')
+                router.push('/admin/chapters')
+                setLoading(false)
+                return
+            }
+
+            try {
+                const response = await api.get(`/chapters/${chapterId}`) // Corrected endpoint
+                if (response.status !== 200) throw new Error('Failed to fetch chapter')
+                const data = response.data
+                setFormData({
+                    title: data.title || '',
+                    slug: data.slug || '',
+                    content: data.content || '',
+                    novelId: data.novelId || '',
+                    accessTier: data.accessTier || 'FREE',
+                    isPublished: data.isPublished || false,
+                    metaTitle: data.metaTitle || '',
+                    metaDescription: data.metaDescription || '',
+                    priceCoins: data.priceCoins || 0,
+                    isLocked: data.isLocked || false,
+                })
+            } catch (err: any) {
+                console.error('Error fetching chapter:', err)
+                toast.error(err.message || 'Failed to load chapter')
+                router.push('/admin/chapters') // Redirect on error
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchChapter()
+    }, [chapterId, router])
+
+    // Fetch novels for selection (optional, can be removed if not needed)
     const { data: novels = [] } = useQuery({
         queryKey: ['novels-list'],
         queryFn: async () => {
@@ -52,17 +90,39 @@ export default function CreateChapterPage() {
         }
     })
 
+    // Mutation for updating chapter
+    const mutation = useMutation({
+        mutationFn: async (data: any) => {
+            const response = await api.patch(`/admin/chapters/${chapterId}`, {
+                ...data,
+                wordCount: data.content.split(/\s+/).length,
+            })
+            if (response.status !== 200) {
+                throw new Error('Failed to update chapter')
+            }
+            setIsSubmitting(true)
+            return response.data
+        },
+        onSuccess: () => {
+            toast.success('Chapter updated successfully!')
+            router.push('/admin/chapters')
+        },
+        onError: (error: any) => {
+            toast.error(error.message || 'Failed to update chapter')
+        },
+    })
+
     const handleInputChange = (field: string, value: any) => {
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
-            [field]: value
+            [field]: value,
         }))
 
         // Auto-generate slug from title
         if (field === 'title') {
-            setFormData(prev => ({
+            setFormData((prev) => ({
                 ...prev,
-                slug: value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+                slug: value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
             }))
         }
     }
@@ -76,32 +136,15 @@ export default function CreateChapterPage() {
         }
 
         setIsSubmitting(true)
+        mutation.mutate(formData)
+    }
 
-        try {
-            const response = await fetch('/api/chapters', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    wordCount: formData.content.split(/\s+/).length
-                })
-            })
-
-            if (!response.ok) {
-                const error = await response.json()
-                throw new Error(error.error || 'Failed to create chapter')
-            }
-
-            const chapter = await response.json()
-            toast.success('Chapter created successfully!')
-            router.push('/admin/chapters')
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to create chapter')
-        } finally {
-            setIsSubmitting(false)
-        }
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
+                Loading novel data...
+            </div>
+        )
     }
 
     return (
@@ -116,8 +159,8 @@ export default function CreateChapterPage() {
                         </Link>
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-bold">Create New Chapter</h1>
-                        <p className="text-muted-foreground">Add a new chapter to a novel</p>
+                        <h1 className="text-3xl font-bold">Update Chapter</h1>
+                        <p className="text-muted-foreground">Edit the chapter details</p>
                     </div>
                 </div>
             </div>
@@ -178,20 +221,21 @@ export default function CreateChapterPage() {
 
                             <div className="flex items-center space-x-2">
                                 <Switch
-                                    id="published"
+                                    id="locked"
                                     checked={formData.isLocked}
                                     onCheckedChange={(checked) => handleInputChange('isLocked', checked)}
                                 />
-                                <Label htmlFor="published">Lock Chapter</Label>
+                                <Label htmlFor="locked">Lock Chapter</Label>
                             </div>
+
                             <div className="space-y-2">
-                                <Label htmlFor="accessTier">Chapter Price</Label>
+                                <Label htmlFor="priceCoins">Chapter Price</Label>
                                 <Input
                                     id="priceCoins"
                                     type="number"
                                     min={0}
                                     value={formData.priceCoins}
-                                    onChange={(e) => handleInputChange('priceCoins', parseInt(e.target.value, 10))}
+                                    onChange={(e) => handleInputChange('priceCoins', parseInt(e.target.value, 10) || 0)}
                                     placeholder="Price in coins (0 for free)"
                                 />
                                 <p className="text-xs text-muted-foreground">
@@ -264,9 +308,9 @@ export default function CreateChapterPage() {
                     <Button type="button" variant="outline" asChild>
                         <Link href="/admin/chapters">Cancel</Link>
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <Button type="submit" disabled={isSubmitting || mutation.isPending}>
                         <Save className="mr-2 h-4 w-4" />
-                        {isSubmitting ? 'Creating...' : 'Create Chapter'}
+                        {isSubmitting || mutation.isPending ? 'Updating...' : 'Update Chapter'}
                     </Button>
                 </div>
             </form>
