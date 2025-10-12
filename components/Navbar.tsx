@@ -112,12 +112,12 @@ export default function Navbar() {
                     Profile
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+                {/* <DropdownMenuItem asChild>
                   <Link href="/library" className="flex items-center">
                     <BookOpen className="mr-2 h-4 w-4" />
                     My Library
                   </Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem asChild>
                   <Link href="/coins" className="flex items-center">
                     <Crown className="mr-2 h-4 w-4" />

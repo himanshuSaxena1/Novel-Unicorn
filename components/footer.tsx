@@ -5,7 +5,7 @@ import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
 
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+        <footer className="bg-gray-900 text-white py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* Logo and Description */}
                 <div className="space-y-4">
@@ -81,7 +81,7 @@ const Footer = () => {
             </div>
 
             {/* Bottom Bar */}
-            <div className="mt-8 pt-6 border-t border-gray-800 text-center text-gray-500 text-sm">
+            <div className="mt-4 pt-6 border-t border-gray-800 text-center text-gray-500 text-sm">
                 <p>
                     &copy; {new Date().getFullYear()} Unique Novels. All rights reserved. |{" "}
                     <a href="/terms" className="text-gray-400 hover:text-yellow-400 transition-colors">
