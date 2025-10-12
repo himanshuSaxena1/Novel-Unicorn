@@ -72,11 +72,19 @@ export const authOptions: NextAuthOptions = {
           token.role = user.role;
           token.username = user.username;
           token.coinBalance = user.coinBalance;
-          token.sub = user.id; // Ensure sub is set
+          token.sub = user.id;
         }
         if (account && trigger === "signIn") {
           token.provider = account.provider;
           token.providerAccountId = account.providerAccountId;
+        } else {
+          const user = await prisma.user.findUnique({
+            where: { id: token.sub },
+            select: { coinBalance: true },
+          });
+          if (user) {
+            token.coinBalance = user.coinBalance;
+          }
         }
       } catch (error) {
         console.error("JWT Callback Error:", error);
@@ -126,7 +134,7 @@ export const authOptions: NextAuthOptions = {
                   scope: account.scope,
                 },
               });
-            } 
+            }
           } else {
             // Create new user and link the Google account
             const newUser = await prisma.user.create({

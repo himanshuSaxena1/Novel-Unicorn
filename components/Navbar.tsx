@@ -39,10 +39,13 @@ export default function Navbar() {
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left - Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <BookOpenText className="h-7 w-7 text-primary" />
-          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-            Novel Unicorn
+        <Link href="/" className="flex items-center gap-1.5">
+          <BookOpenText className="h-7 w-7 text-primary hidden sm:block" />
+          <span className="hidden sm:flex text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            Unique Novels
+          </span>
+          <span className="flex sm:hidden text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            UN
           </span>
         </Link>
 
@@ -70,15 +73,15 @@ export default function Navbar() {
               </Button>
             </Link>
 
-            {
-              session?.user && (
-                <Link href="/subscription" className='flex items-center gap-1'>
-                    <CirclePoundSterling className="h-4 w-4 text-yellow-600" />
-                    {session?.user.coinBalance}
-                </Link>
-              )
-            }
           </div>
+          {
+            session?.user && (
+              <Link href="/coins" className='flex items-center gap-1'>
+                <CirclePoundSterling className="h-4 w-4 text-yellow-600" />
+                {session?.user.coinBalance}
+              </Link>
+            )
+          }
 
           {/* Theme Toggle */}
           <Button
@@ -116,9 +119,9 @@ export default function Navbar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/subscription" className="flex items-center">
+                  <Link href="/coins" className="flex items-center">
                     <Crown className="mr-2 h-4 w-4" />
-                    Subscription
+                    Coins
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -185,7 +188,7 @@ export default function Navbar() {
               </Button>
             </Link>
 
-            <Link href="/subscription" onClick={() => setMobileMenuOpen(false)}>
+            <Link href="/coins" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="outline" className="w-full justify-start flex items-center space-x-2">
                 <Crown className="h-4 w-4 text-yellow-500" />
                 <span>Premium</span>

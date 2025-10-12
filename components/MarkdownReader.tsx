@@ -187,7 +187,7 @@ export function RichTextRenderer({ content, className = "" }: RichTextRendererPr
     if (!editor) {
         return (
             <div className={`space-y-4 animate-pulse ${className}`}>
-                {[...Array(5)].map((_, i) => (
+                {[...Array(10)].map((_, i) => (
                     <div
                         key={i}
                         className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"

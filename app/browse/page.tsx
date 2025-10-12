@@ -96,7 +96,7 @@ export default function BrowsePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[70vh] bg-background">
       <div className="max-w-6xl mx-auto px-4 py-8">
 
         {/* Search and Controls */}

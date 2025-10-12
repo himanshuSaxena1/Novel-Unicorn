@@ -17,7 +17,7 @@ export function ChapterClient({ data }: { data: any }) {
     const { novel, chapter, prev, next } = data;
     const [locked, setLocked] = useState(chapter.isLocked);
     const [unlocking, setUnlocking] = useState(false);
-    const { data: session, status } = useSession()
+    const { data: session, update } = useSession()
 
     const handleUnlock = async () => {
         if (!session) {
@@ -31,9 +31,11 @@ export function ChapterClient({ data }: { data: any }) {
             const res = await api.post(`/chapters/paypal/${chapter.id}/purchase`);
             if (res.data.success) {
                 toast.success("Chapter unlocked! Enjoy reading.");
+                window.location.reload()
                 if (res.data.unlocked) {
                     setLocked(false);
                     chapter.content = res.data.unlocked.content;
+                    await update();
                     return;
                 }
                 const chapterRes = await api.get(`/novels/${novel.slug}/chapters/${chapter.slug}`);

@@ -107,7 +107,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" variant="secondary" asChild>
-                <Link href="/subscription">
+                <Link href="/coins">
                   View Plans
                 </Link>
               </Button>

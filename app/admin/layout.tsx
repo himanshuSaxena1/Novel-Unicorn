@@ -23,7 +23,7 @@ const navigation = [
   { name: 'Novels', href: '/admin/novels', icon: BookOpen },
   { name: 'Chapters', href: '/admin/chapters', icon: FileText },
   { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Subscriptions', href: '/admin/subscriptions', icon: Crown },
+  { name: 'Subscriptions', href: '/admin/coins', icon: Crown },
   { name: 'Payments', href: '/admin/payments', icon: CreditCard },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
