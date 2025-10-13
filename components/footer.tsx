@@ -81,7 +81,7 @@ const Footer = () => {
             </div>
 
             {/* Bottom Bar */}
-            <div className="mt-4 pt-6 border-t border-gray-800 text-center text-gray-500 text-sm">
+            <div className="mt-12 pt-6 border-t border-gray-800 text-center text-gray-500 text-sm">
                 <p>
                     &copy; {new Date().getFullYear()} Unique Novels. All rights reserved. |{" "}
                     <a href="/terms" className="text-gray-400 hover:text-yellow-400 transition-colors">
