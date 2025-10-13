@@ -59,11 +59,16 @@ export default function HeroCarousel({ initialNovels = [] }) {
 
   useEffect(() => {
     if (!emblaApi) return
+
     const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap())
     emblaApi.on("select", onSelect)
     onSelect()
-    return () => emblaApi.off("select", onSelect)
+
+    return () => {
+      emblaApi.off("select", onSelect)
+    }
   }, [emblaApi])
+
 
   useEffect(() => {
     if (!emblaApi || slides.length <= 1) return
