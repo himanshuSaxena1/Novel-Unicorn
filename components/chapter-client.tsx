@@ -146,6 +146,27 @@ export function ChapterClient({ data }: { data: any }) {
                         </div>
                     )}
                 </ReaderContainer>
+
+                <div className="flex items-center justify-between pb-5 md:hidden">
+                    {prev ? (
+                        <Button asChild variant="outline" size="sm">
+                            <Link href={`/novel/${novel.slug}/chapter/${prev.slug}`}>Previous</Link>
+                        </Button>
+                    ) : (
+                        <Button variant="outline" size="sm" disabled>
+                            Previous
+                        </Button>
+                    )}
+                    {next ? (
+                        <Button asChild size="sm">
+                            <Link href={`/novel/${novel.slug}/chapter/${next.slug}`}>Next</Link>
+                        </Button>
+                    ) : (
+                        <Button size="sm" disabled>
+                            Next
+                        </Button>
+                    )}
+                </div>
             </main>
         </ReaderProvider>
     );
