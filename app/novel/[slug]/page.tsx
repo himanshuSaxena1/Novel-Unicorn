@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CalendarDays, BookOpen, Eye } from "lucide-react"
 import { NovelNotFound } from "@/components/NovelNotFound"
+import { ExpandableSummary } from "@/components/ExpandableSummary"
 
 export default async function NovelPage({ params }: { params: { slug: string } }) {
     const novel = await getNovelBySlug(params.slug)
@@ -14,7 +15,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
     if (!novel) return <NovelNotFound />;
 
     return (
-        <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+        <main className="mx-auto max-w-6xl px-4 py-8 md:py-12 min-h-[70vh]">
             {/* Header Section */}
             <div className="grid gap-8 md:grid-cols-[280px,1fr] items-start">
                 {/* Cover */}
@@ -98,7 +99,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
 
                     {/* Description */}
                     <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                        {novel.description || "No description available."}
+                        <ExpandableSummary summary={novel.description || "No description available."} />
                     </p>
 
                     {/* Start Reading Button */}

@@ -46,6 +46,7 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '@/lib/axios'
+import { ChapterDeleteButton } from '@/components/chapter/page'
 
 const ACCESS_TIER_COLORS = {
   FREE: 'bg-green-500',
@@ -293,7 +294,7 @@ export default function AdminChaptersPage() {
                     <TableCell>#{chapter.order}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        {chapter.priceCoins > 0 ? <span className='flex items-center gap-1'><CoinsIcon className="w-4 h-4 text-yellow-600" />{chapter.priceCoins}</span> : "FREE"} 
+                        {chapter.priceCoins > 0 ? <span className='flex items-center gap-1'><CoinsIcon className="w-4 h-4 text-yellow-600" />{chapter.priceCoins}</span> : "FREE"}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -331,13 +332,7 @@ export default function AdminChaptersPage() {
                           >
                             {chapter.isPublished ? 'Unpublish' : 'Publish'}
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-red-600"
-                            onClick={() => handleDelete(chapter.id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
+                          <ChapterDeleteButton id={chapter.id} />
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
