@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Redis from "ioredis";
 
 const redis = new Redis(process.env.REDIS_URL!, {

@@ -7,8 +7,9 @@ import React from 'react'
 const page = async () => {
   const response = await NovelAPI.getFeaturedNovels(8);
 
-  const data = await response.data
+  const data = await response
   const featuredNovels = data
+
 
 
   return (

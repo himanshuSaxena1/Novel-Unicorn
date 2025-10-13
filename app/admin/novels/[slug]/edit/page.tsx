@@ -51,7 +51,7 @@ export default function EditNovelPage() {
     genres: [] as string[],
     tags: [] as string[],
     isPublished: false,
-    isFeaturing: false,
+    isFeatured: false,
     language: 'ENGLISH',
     novelPrice: null as number | null,
   })
@@ -72,7 +72,7 @@ export default function EditNovelPage() {
           genres: data.genres || [],
           tags: data.tags || [],
           isPublished: data.isPublished || false,
-          isFeaturing: data.isFeaturing || false,
+          isFeatured: data.isFeatured || false,
           language: data.language || 'ENGLISH',
           novelPrice: data.novelPrice || null,
         })
@@ -343,8 +343,8 @@ export default function EditNovelPage() {
             <div className="space-y-2">
               <Label>Featuring</Label>
               <Select
-                value={formData.isFeaturing ? 'YES' : 'NO'}
-                onValueChange={(v) => handleInputChange('isFeaturing', v === 'YES')}
+                value={formData.isFeatured ? 'YES' : 'NO'}
+                onValueChange={(v) => handleInputChange('isFeatured', v === 'YES')}
               >
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
