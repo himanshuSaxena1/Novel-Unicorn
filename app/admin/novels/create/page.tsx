@@ -19,6 +19,7 @@ import { X, Plus, Upload, Save, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
+import api from '@/lib/axios'
 
 const GENRE_OPTIONS = [
   'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller', 'Horror',
@@ -80,20 +81,11 @@ export default function CreateNovelPage() {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/novels', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      })
-
-      if (!response.ok) {
+      const response = await api.post('/novels', formData)
+      if (response.status !== 201) {
         throw new Error('Failed to create novel')
       }
-
-      const novel = await response.json()
-
+      toast.success("Novel created successfully.")
       router.push('/admin/novels')
     } catch (error) {
       console.error('Error creating novel:', error)

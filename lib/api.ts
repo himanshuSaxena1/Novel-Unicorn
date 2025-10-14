@@ -1,3 +1,7 @@
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import redis, { CACHE_KEYS, CACHE_TTL } from "@/lib/redis";

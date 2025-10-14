@@ -1,17 +1,16 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import HeroCarousel from '@/components/HeroCarousel'
 import HomePage from '@/components/Home'
 import { Button } from '@/components/ui/button';
 import { NovelAPI } from '@/lib/api';
-import api from '@/lib/axios';
-import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React from 'react'
 
 export default async function page() {
   const response = await NovelAPI.getFeaturedNovels(8);
-  const data = await response
-  const featuredNovels = data
-
+  const featuredNovels = await response;
 
   // const { data: trendingNovels = [] } = useQuery({
   //   queryKey: ['trending-novels'],
@@ -24,23 +23,8 @@ export default async function page() {
 
   const trendingNovels = await NovelAPI.getTrendingNovels(10)
 
-  // ✅ Define the type once
-  type NovelFilters = {
-    page?: number
-    limit?: number
-    search?: string
-    genres?: string[]
-    status?: string
-    sortBy?: 'createdAt' | 'title' | 'rating' | 'views'
-    sortOrder?: 'asc' | 'desc'
-  }
-
-
-
   const result = await NovelAPI.getNovelsByFilters()
   const dataa = await result
-
-
 
   // const { data: recentNovels = [] } = useQuery({
   //   queryKey: ['recent-novels'],

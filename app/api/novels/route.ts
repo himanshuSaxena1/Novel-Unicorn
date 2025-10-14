@@ -3,8 +3,9 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { NovelAPI } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
+import redis, { CACHE_KEYS } from "@/lib/redis";
+import { clearNovelCaches } from "@/lib/cache";
 
 export async function GET(request: NextRequest) {
   try {
@@ -126,6 +127,8 @@ export async function POST(request: NextRequest) {
         _count: { select: { chapters: true, bookmarks: true } },
       },
     });
+
+    await clearNovelCaches();
 
     return NextResponse.json(novel, { status: 201 });
   } catch (error) {

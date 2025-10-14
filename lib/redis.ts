@@ -20,8 +20,8 @@ export const CACHE_KEYS = {
 };
 
 export const CACHE_TTL = {
-  short: 50, // 5 minutes
-  medium: 50, // 30 minutes
-  long: 50, // 1 hour
-  day: 50, // 24 hours
+  short: 1, // 5 minutes
+  medium: 1, // 30 minutes
+  long: 1, // 1 hour
+  day: 1, // 24 hours
 };

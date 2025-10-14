@@ -13,18 +13,23 @@ interface Novel {
   id: string
   title: string
   slug: string
-  description: string
-  cover: string
+  description?: string | null       // ✅ DB can return null
+  cover?: string | null             // ✅ DB can return null
   author: { username: string }
-  rating: number
-  views: number
-  genres: string[]
+  rating?: number | null            // ✅ fix the current type error
+  views?: number | null
+  genres?: string[]
   chapterCount: number
-  latestChapter?: { title: string }
+  latestChapter?: { title: string } | null
   language: string
 }
 
-export default function HeroCarousel({ initialNovels = [] }) {
+
+interface HeroCarouselProps {
+  initialNovels: Novel[]
+}
+
+export default function HeroCarousel({ initialNovels }: HeroCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     slidesToScroll: 1,
@@ -128,7 +133,7 @@ export default function HeroCarousel({ initialNovels = [] }) {
                           {novel.title}
                         </h1>
                       </div>
-                      <p className="text-xs md:text-base text-gray-300 line-clamp-2 md:line-clamp-3 max-w-2xl">{novel.description}</p>
+                      <p className="text-xs md:text-base text-gray-300 line-clamp-2 md:line-clamp-3 max-w-2xl">{novel.description || "No description available."}</p>
                       <div className="flex items-center space-x-6 text-sm">
                         <div className="flex items-center space-x-1">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />

@@ -3,14 +3,14 @@ import { prisma } from "@/lib/prisma";
 import redis, { CACHE_KEYS, CACHE_TTL } from "@/lib/redis";
 
 export async function getNovels(page = 1, limit = 12, filters: any = {}) {
-  const cacheKey = CACHE_KEYS.novels(page, JSON.stringify(filters));
+  // const cacheKey = CACHE_KEYS.novels(page, JSON.stringify(filters));
 
-  try {
-    const cached = await redis.get(cacheKey);
-    if (cached) return JSON.parse(cached);
-  } catch (error) {
-    console.error("Redis cache error:", error);
-  }
+  // try {
+  //   const cached = await redis.get(cacheKey);
+  //   if (cached) return JSON.parse(cached);
+  // } catch (error) {
+  //   console.error("Redis cache error:", error);
+  // }
 
   const skip = (page - 1) * limit;
 
@@ -60,11 +60,11 @@ export async function getNovels(page = 1, limit = 12, filters: any = {}) {
     pages: Math.ceil(total / limit),
   };
 
-  try {
-    await redis.setex(cacheKey, CACHE_TTL.medium, JSON.stringify(result));
-  } catch (error) {
-    console.error("Redis cache error:", error);
-  }
+  // try {
+  //   await redis.setex(cacheKey, CACHE_TTL.medium, JSON.stringify(result));
+  // } catch (error) {
+  //   console.error("Redis cache error:", error);
+  // }
 
   return result;
 }
