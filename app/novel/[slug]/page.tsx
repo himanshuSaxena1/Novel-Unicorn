@@ -142,13 +142,13 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                         <span className="text-sm text-muted-foreground mr-2">
                                             #{chapter.order}
                                         </span>
-                                        <span className="font-medium group-hover:text-primary">
+                                        <span className="text-sm md:text-base font-medium group-hover:text-primary line-clamp-1">
                                             {chapter.title}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                         <Eye className="h-3 w-3" />
-                                        {chapter.views}
+                                        {/* {chapter.views} */}Read
                                     </div>
                                 </Link>
                             ))}
