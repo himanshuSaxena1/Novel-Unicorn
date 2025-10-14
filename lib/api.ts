@@ -1,4 +1,3 @@
-
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -138,7 +137,9 @@ export class NovelAPI {
 
     // ✅ Validate sortBy against allowed Prisma columns
     const validSortFields = ["createdAt", "views", "rating", "title"];
-    const safeSortBy = validSortFields.includes(filters.sortBy) ? filters.sortBy : "createdAt";
+    const safeSortBy = validSortFields.includes(filters.sortBy)
+      ? filters.sortBy
+      : "createdAt";
 
     // ✅ Fetch data
     const [novels, total] = await Promise.all([
@@ -295,6 +296,17 @@ export async function getChapter(slug: string, chapterSlug: string) {
     if (!novel) {
       return NextResponse.json({ error: "Novel not found" }, { status: 404 });
     }
+
+    await prisma.novel.update({
+      where: {
+        id: novel.id,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
 
     const chapterData = await prisma.chapter.findFirst({
       where: {

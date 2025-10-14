@@ -136,17 +136,17 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                 <Link
                                     key={chapter.slug}
                                     href={`/novel/${novel.slug}/chapter/${chapter.slug}`}
-                                    className="group flex items-center justify-between px-4 py-3 transition-colors hover:bg-accent/50"
+                                    className="group flex items-center justify-between px-2 md:px-4 py-3 transition-colors hover:bg-accent/50"
                                 >
-                                    <div>
+                                    <div className="text-sm md:text-base flex items-center">
                                         <span className="text-sm text-muted-foreground mr-2">
                                             #{chapter.order}
                                         </span>
-                                        <span className="text-sm md:text-base font-medium group-hover:text-primary line-clamp-1">
+                                        <span className=" font-medium group-hover:text-primary line-clamp-1">
                                             {chapter.title}
                                         </span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                    <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
                                         <Eye className="h-3 w-3" />
                                         {/* {chapter.views} */}Read
                                     </div>
