@@ -386,7 +386,7 @@ export default function AdminSettingsPage() {
             <CardHeader>
               <CardTitle>Site Configuration</CardTitle>
               <CardDescription>
-                Configure your site's basic information and settings
+                Configure your site&apos;s basic information and settings
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

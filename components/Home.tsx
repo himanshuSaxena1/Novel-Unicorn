@@ -1,40 +1,19 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import NovelCard from '@/components/NovelCard'
 import { Search, TrendingUp, Clock, Star, ArrowRight, BookOpen, Users, Award } from 'lucide-react'
 
-export default function HomePage() {
-    const [searchQuery, setSearchQuery] = useState('')
+export default function HomePage({ recentNovels, trendingNovels }: any) {
 
-    const { data: trendingNovels = [] } = useQuery({
-        queryKey: ['trending-novels'],
-        queryFn: async () => {
-            const response = await fetch('/api/novels/trending')
-            if (!response.ok) throw new Error('Failed to fetch trending novels')
-            return response.json()
-        }
-    })
 
-    const { data: recentNovels = [] } = useQuery({
-        queryKey: ['recent-novels'],
-        queryFn: async () => {
-            const response = await fetch('/api/novels?limit=8&sortBy=updatedAt')
-            if (!response.ok) throw new Error('Failed to fetch recent novels')
-            return response.json()
-        }
-    })
 
     return (
         <div className="min-h-screen  bg-background">
             <div className='max-w-6xl mx-auto'>
 
                 {/* Hero Section */}
-                
+
 
                 {/* Trending Section */}
 

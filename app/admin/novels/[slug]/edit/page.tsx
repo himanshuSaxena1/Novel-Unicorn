@@ -18,8 +18,8 @@ import {
 import { X, Save, ArrowLeft, Upload } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { toast } from 'sonner' // optional toast for UX
 import api from '@/lib/axios'
+import toast from 'react-hot-toast'
 
 const GENRE_OPTIONS = [
   'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller', 'Horror',
@@ -113,8 +113,9 @@ export default function EditNovelPage() {
       })
 
       if (response.status !== 200) throw new Error('Failed to update novel')
-
-      toast.success('Novel updated successfully')
+      if (response) {
+        toast.success('Novel updated successfully')
+      }
       router.push('/admin/novels')
     } catch (err) {
       console.error(err)
@@ -286,12 +287,12 @@ export default function EditNovelPage() {
                       if (!file) return;
 
                       try {
-                        toast.info('Uploading image...');
+                        toast.loading('Uploading image...');
                         setIsSubmitting(true);
 
                         const { uploadImage } = await import('@/lib/upload-image');
                         const url = await uploadImage(file, (progress) => {
-                          toast.message(`Uploading: ${progress}%`);
+                          toast.loading(`Uploading: ${progress}%`);
                         });
 
                         handleInputChange('cover', url);

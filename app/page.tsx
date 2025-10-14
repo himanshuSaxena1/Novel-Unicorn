@@ -2,20 +2,60 @@ import HeroCarousel from '@/components/HeroCarousel'
 import HomePage from '@/components/Home'
 import { Button } from '@/components/ui/button';
 import { NovelAPI } from '@/lib/api';
+import api from '@/lib/axios';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React from 'react'
 
-const page = async () => {
+export default async function page() {
   const response = await NovelAPI.getFeaturedNovels(8);
-
   const data = await response
   const featuredNovels = data
+
+
+  // const { data: trendingNovels = [] } = useQuery({
+  //   queryKey: ['trending-novels'],
+  //   queryFn: async () => {
+  //     const response = await fetch('/api/novels/trending')
+  //     if (!response.ok) throw new Error('Failed to fetch trending novels')
+  //     return response.json()
+  //   }
+  // })
+
+  const trendingNovels = await NovelAPI.getTrendingNovels(10)
+
+  // ✅ Define the type once
+  type NovelFilters = {
+    page?: number
+    limit?: number
+    search?: string
+    genres?: string[]
+    status?: string
+    sortBy?: 'createdAt' | 'title' | 'rating' | 'views'
+    sortOrder?: 'asc' | 'desc'
+  }
+
+
+
+  const result = await NovelAPI.getNovelsByFilters()
+  const dataa = await result
+
+
+
+  // const { data: recentNovels = [] } = useQuery({
+  //   queryKey: ['recent-novels'],
+  //   queryFn: async () => {
+  //     const response = await fetch('/api/novels?limit=8&sortBy=updatedAt')
+  //     if (!response.ok) throw new Error('Failed to fetch recent novels')
+  //     return response.json()
+  //   }
+  // })
 
   return (
     <div className='min-h-screen  bg-background'>
       <div className='max-w-6xl mx-auto'>
         <HeroCarousel initialNovels={featuredNovels} />
-        <HomePage />
+        <HomePage trendingNovels={trendingNovels} recentNovels={dataa} />
       </div>
       <section className="py-8 px-4 bg-gradient-to-r from-primary/70 to-blue-700">
         <div className="container mx-auto text-center text-white">
@@ -43,4 +83,3 @@ const page = async () => {
   )
 }
 
-export default page

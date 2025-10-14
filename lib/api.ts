@@ -94,45 +94,49 @@ export class NovelAPI {
     return result;
   }
 
-  static async getNovelsByFilters(filters: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    genres?: string[];
-    status?: string;
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-  }) {
-    const {
-      page = 1,
-      limit = 12,
-      search,
-      genres,
-      status,
-      sortBy = "createdAt",
-      sortOrder = "desc",
-    } = filters;
+  static async getNovelsByFilters() {
+    const filters = {
+      page: 1,
+      limit: 12,
+      search: "",
+      genres: [],
+      status: "ONGOING",
+      sortBy: "createdAt",
+      sortOrder: "desc",
+    };
 
-    const skip = (page - 1) * limit;
+    const skip = (filters.page - 1) * filters.limit;
 
     const where: any = {};
 
-    if (search) {
+    // ✅ Search filters
+    if (filters.search) {
       where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
-        { author: { username: { contains: search, mode: "insensitive" } } },
+        { title: { contains: filters.search, mode: "insensitive" } },
+        { description: { contains: filters.search, mode: "insensitive" } },
+        {
+          author: {
+            username: { contains: filters.search, mode: "insensitive" },
+          },
+        },
       ];
     }
 
-    if (genres && genres.length > 0) {
-      where.genres = { hasSome: genres };
+    // ✅ Genre filters
+    if (filters.genres && filters.genres.length > 0) {
+      where.genres = { hasSome: filters.genres };
     }
 
-    if (status) {
-      where.status = status;
+    // ✅ Status filter
+    if (filters.status) {
+      where.status = filters.status;
     }
 
+    // ✅ Validate sortBy against allowed Prisma columns
+    const validSortFields = ["createdAt", "views", "rating", "title"];
+    const safeSortBy = validSortFields.includes(filters.sortBy) ? filters.sortBy : "createdAt";
+
+    // ✅ Fetch data
     const [novels, total] = await Promise.all([
       prisma.novel.findMany({
         where,
@@ -152,13 +156,14 @@ export class NovelAPI {
             select: { chapters: true, bookmarks: true, reviews: true },
           },
         },
-        orderBy: { [sortBy]: sortOrder },
+        orderBy: { [safeSortBy]: filters.sortOrder }, // ✅ correct computed key usage
         skip,
-        take: limit,
+        take: filters.limit,
       }),
       prisma.novel.count({ where }),
     ]);
 
+    // ✅ Return formatted result
     return {
       novels: novels.map((novel) => ({
         ...novel,
@@ -168,8 +173,8 @@ export class NovelAPI {
         reviewCount: novel._count.reviews,
       })),
       total,
-      pages: Math.ceil(total / limit),
-      currentPage: page,
+      pages: Math.ceil(total / filters.limit),
+      currentPage: filters.page,
     };
   }
 }

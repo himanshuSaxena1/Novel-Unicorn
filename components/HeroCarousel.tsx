@@ -107,7 +107,7 @@ export default function HeroCarousel({ initialNovels = [] }) {
                 <div className="container mx-auto px-4">
                   <div className="flex flex-col md:flex-row justify-center gap-8 items-center px-0 md:px-2 lg:px-6 xl:px-10 2xl:px-16">
                     <div className="flex justify-center items-center">
-                      <div className="relative w-64 h-80 rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                      <div className="relative w-56 md:w-60 md:h-80 h-72 rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
                         <Image
                           src={novel.cover || "https://images.pexels.com/photos/694740/pexels-photo-694740.jpeg"}
                           alt={novel.title}
@@ -128,7 +128,7 @@ export default function HeroCarousel({ initialNovels = [] }) {
                           {novel.title}
                         </h1>
                       </div>
-                      <p className="text-xs md:text-base text-gray-300 line-clamp-3 max-w-2xl">{novel.description}</p>
+                      <p className="text-xs md:text-base text-gray-300 line-clamp-2 md:line-clamp-3 max-w-2xl">{novel.description}</p>
                       <div className="flex items-center space-x-6 text-sm">
                         <div className="flex items-center space-x-1">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -151,7 +151,7 @@ export default function HeroCarousel({ initialNovels = [] }) {
                         ))}
                       </div>
                       {novel.latestChapter && (
-                        <div className="text-sm text-gray-300">Latest: {novel.latestChapter.title}</div>
+                        <div className="text-sm text-gray-300 hidden md:flex">Latest: {novel.latestChapter.title}</div>
                       )}
                       <div className="flex space-x-4">
                         <Button size="lg" asChild>

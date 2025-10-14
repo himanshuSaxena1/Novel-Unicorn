@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Search, MoveHorizontal as MoreHorizontal, CreditCard as Edit, Ban, Crown, Users, UserCheck, UserX, Shield } from 'lucide-react'
+import Link from 'next/link'
 
 const ROLE_COLORS = {
   USER: 'bg-blue-500',
@@ -33,7 +34,7 @@ const ROLE_COLORS = {
 const SUBSCRIPTION_COLORS = {
   FREE: 'bg-gray-500',
   SMALL: 'bg-blue-500',
-  MEDIUM: 'bg-yellow-500', 
+  MEDIUM: 'bg-yellow-500',
   PREMIUM: 'bg-purple-500'
 }
 
@@ -49,10 +50,10 @@ export default function AdminUsersPage() {
         page: page.toString(),
         limit: '20'
       })
-      
+
       if (searchQuery) params.set('search', searchQuery)
       if (roleFilter !== 'ALL') params.set('role', roleFilter)
-      
+
       const response = await fetch(`/api/admin/users?${params}`)
       if (!response.ok) throw new Error('Failed to fetch users')
       return response.json()
@@ -78,7 +79,7 @@ export default function AdminUsersPage() {
             <div className="text-2xl font-bold">{data?.total || 0}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
@@ -90,7 +91,7 @@ export default function AdminUsersPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Premium Subscribers</CardTitle>
@@ -102,7 +103,7 @@ export default function AdminUsersPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Authors</CardTitle>
@@ -127,7 +128,7 @@ export default function AdminUsersPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
@@ -219,8 +220,10 @@ export default function AdminUsersPage() {
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit User
+                            <Link className='flex items-center gap-1' href={`/admin/users/${user.id}/edit`}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit User
+                            </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Crown className="mr-2 h-4 w-4" />
