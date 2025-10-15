@@ -1,11 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
-import { notFound } from "next/navigation"
 import { getNovelBySlug } from "@/lib/queries"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { CalendarDays, BookOpen, Eye } from "lucide-react"
+import { CalendarDays, BookOpen, Eye, CoinsIcon } from "lucide-react"
 import { NovelNotFound } from "@/components/NovelNotFound"
 import { ExpandableSummary } from "@/components/ExpandableSummary"
 
@@ -132,7 +131,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                     b: { order: number }
                                 ) => a.order - b.order
                             )
-                            .map((chapter: { slug: string; order: number; title: string; views: number }) => (
+                            .map((chapter: { slug: string; order: number; title: string; views: number, isLocked: boolean, priceCoins: number }) => (
                                 <Link
                                     key={chapter.slug}
                                     href={`/novel/${novel.slug}/chapter/${chapter.slug}`}
@@ -147,8 +146,19 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
-                                        <Eye className="h-3 w-3" />
-                                        {/* {chapter.views} */}Read
+                                        {
+                                            chapter.isLocked ? (
+                                                <span className="border border-yellow-600 px-2 py-2 rounded-md flex items-center gap-1">
+                                                    {chapter.priceCoins}
+                                                    <CoinsIcon className="w-4 h-4 text-yellow-600"/>
+                                                </span>
+                                            ) : (
+                                                <>
+                                                    <Eye className="h-3 w-3" />
+                                                    {/* {chapter.views} */}Read
+                                                </>
+                                            )
+                                        }
                                     </div>
                                 </Link>
                             ))}

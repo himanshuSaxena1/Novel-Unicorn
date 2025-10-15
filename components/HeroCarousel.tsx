@@ -165,7 +165,7 @@ export default function HeroCarousel({ initialNovels }: HeroCarouselProps) {
                         <Button
                           size="lg"
                           variant="outline"
-                          className="border-white text-black hover:bg-black hover:text-white dark:text-white dark:hover:bg-white dark:hover:text-black bg-transparent"
+                          className="border-white text-black bg-white hover:bg-black hover:text-white dark:text-white dark:hover:bg-white dark:hover:text-black bg-transparent"
                         >
                           Add to Library
                         </Button>

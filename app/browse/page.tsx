@@ -241,7 +241,7 @@ export default function BrowsePage() {
           {/* Results */}
           <div className={showFilters ? 'lg:col-span-4' : 'lg:col-span-6'}>
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 {Array.from({ length: 10 }).map((_, i) => (
                   <div key={i} className="animate-pulse">
                     <div className="aspect-[3/4] bg-muted rounded-lg mb-4"></div>
@@ -275,7 +275,7 @@ export default function BrowsePage() {
                 {/* Novels Grid */}
                 <div className={`grid gap-6 ${
                   viewMode === 'grid' 
-                    ? 'grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-4' 
+                    ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4' 
                     : 'grid-cols-1'
                 }`}>
                   {data?.novels?.map((novel: any) => (

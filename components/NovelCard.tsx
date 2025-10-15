@@ -66,7 +66,7 @@ export default function NovelCard({
                     {title}
                   </Link>
                 </h3>
-                <p className="text-xs text-muted-foreground">by {authorName}</p>
+                <p className="text-xs text-muted-foreground">by Unique Novels</p>
               </div>
 
               {description && (
@@ -76,19 +76,19 @@ export default function NovelCard({
               )}
 
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1.5 sm:space-x-4 text-sm text-muted-foreground">
                   <div className="flex items-center space-x-1">
                     <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                    <span>{rating.toFixed(1)}</span>
+                    <span className='text-xs sm:text-sm'>{rating.toFixed(1)}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Eye className="h-3 w-3" />
-                    <span>{views.toLocaleString()}</span>
+                    <span className='text-xs sm:text-sm'>{views.toLocaleString()}</span>
                   </div>
-                  <Badge variant={status === 'COMPLETED' ? 'default' : 'secondary'}>
+                  <Badge className='text-xs md:text-sm px-1 md:px-2' variant={status === 'COMPLETED' ? 'default' : 'secondary'}>
                     {status}
                   </Badge>
-                  <Badge variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'outline'}>
+                  <Badge className='text-xs md:text-sm px-1 md:px-2' variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'outline'}>
                     {language}
                   </Badge>
                 </div>
@@ -135,9 +135,9 @@ export default function NovelCard({
         </div>
       </div>
 
-      <CardContent className="p-2 space-y-3">
+      <CardContent className="p-2 space-y-3 ">
         <div>
-          <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-base sm:text-lg line-clamp-2 group-hover:text-primary transition-colors">
             <Link href={`/novel/${slug}`}>
               {title}
             </Link>
