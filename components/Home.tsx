@@ -68,7 +68,7 @@ export default function HomePage({ recentNovels, trendingNovels }: any) {
                         </div>
 
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
-                            {recentNovels.novels?.slice(0, 4).map((novel: any) => (
+                            {recentNovels.novels?.slice(0, 5).map((novel: any) => (
                                 <NovelCard key={novel.id} {...novel} />
                             ))}
                         </div>

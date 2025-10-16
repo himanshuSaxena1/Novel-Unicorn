@@ -112,12 +112,12 @@ export default function Navbar() {
                     Profile
                   </Link>
                 </DropdownMenuItem>
-                {/* <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild>
                   <Link href="/library" className="flex items-center">
                     <BookOpen className="mr-2 h-4 w-4" />
                     My Library
                   </Link>
-                </DropdownMenuItem> */}
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/coins" className="flex items-center">
                     <Crown className="mr-2 h-4 w-4" />
@@ -185,13 +185,6 @@ export default function Navbar() {
             <Link href="/browse" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">
                 Browse
-              </Button>
-            </Link>
-
-            <Link href="/coins" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="outline" className="w-full justify-start flex items-center space-x-2">
-                <Crown className="h-4 w-4 text-yellow-500" />
-                <span>Premium</span>
               </Button>
             </Link>
 

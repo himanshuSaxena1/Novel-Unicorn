@@ -7,9 +7,13 @@ import { Button } from "@/components/ui/button"
 import { CalendarDays, BookOpen, Eye, CoinsIcon } from "lucide-react"
 import { NovelNotFound } from "@/components/NovelNotFound"
 import { ExpandableSummary } from "@/components/ExpandableSummary"
+import BookMark from "@/components/BookMark"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export default async function NovelPage({ params }: { params: { slug: string } }) {
-    const novel = await getNovelBySlug(params.slug)
+    const session = await getServerSession(authOptions);
+    const novel = await getNovelBySlug(params.slug, session?.user?.id)
 
     if (!novel) return <NovelNotFound />;
 
@@ -103,13 +107,20 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                     </p>
 
                     {/* Start Reading Button */}
-                    {novel.chapters.length > 0 && (
-                        <Button asChild size="lg" className="mt-4">
-                            <Link href={`/novel/${novel.slug}/chapter/${novel.chapters[0].slug}`}>
-                                Start Reading
-                            </Link>
-                        </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                        {novel.chapters.length > 0 && (
+                            <Button asChild size="lg" className="">
+                                <Link href={`/novel/${novel.slug}/chapter/${novel.chapters[0].slug}`}>
+                                    Start Reading
+                                </Link>
+                            </Button>
+                        )}
+                        <BookMark
+                            novelId={novel.id as string}
+                            novelSlug={novel.slug as string}
+                            isBookMarked={novel.isBookmarked as boolean}
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -150,7 +161,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                             chapter.isLocked ? (
                                                 <span className="border border-yellow-600 px-2 py-2 rounded-md flex items-center gap-1">
                                                     {chapter.priceCoins}
-                                                    <CoinsIcon className="w-4 h-4 text-yellow-600"/>
+                                                    <CoinsIcon className="w-4 h-4 text-yellow-600" />
                                                 </span>
                                             ) : (
                                                 <>

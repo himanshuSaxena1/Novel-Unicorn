@@ -41,7 +41,7 @@ export default function NovelCard({
   showDetails,
   language,
 }: NovelCardProps) {
-  const authorName = typeof author === 'string' ? author : author.username
+  const authorName = typeof author === 'string' ? author : author?.username
 
   if (viewMode === 'list') {
     return (
