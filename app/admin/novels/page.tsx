@@ -231,9 +231,9 @@ export default function AdminNovelsPage() {
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
-                            <Link href={`/admin/chapters/create?novelId=${novel.id}`}>
+                            <Link href={`/admin/novels/chapters?novelId=${novel?.id}`}>
                               <Plus className="mr-2 h-4 w-4" />
-                              Add Chapter
+                              Chapters
                             </Link>
                           </DropdownMenuItem>
                           <DeleteButton novelSlug={novel.slug} />
