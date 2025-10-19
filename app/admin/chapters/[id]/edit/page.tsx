@@ -105,10 +105,11 @@ export default function UpdateChapterPage({ params }: { params: { id: string } }
         },
         onSuccess: () => {
             toast.success('Chapter updated successfully!')
-            router.push('/admin/chapters')
+            router.back()
         },
         onError: (error: any) => {
-            toast.error(error.message || 'Failed to update chapter')
+            setIsSubmitting(true)
+            toast.error(error.response.data.error || 'Failed to update chapter')
         },
     })
 
@@ -148,7 +149,7 @@ export default function UpdateChapterPage({ params }: { params: { id: string } }
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 max-w-5xl mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -166,7 +167,7 @@ export default function UpdateChapterPage({ params }: { params: { id: string } }
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid gap-8 md:grid-cols-2">
+                <div className="grid ">
                     {/* Basic Information */}
                     <Card>
                         <CardHeader>
@@ -255,7 +256,7 @@ export default function UpdateChapterPage({ params }: { params: { id: string } }
                     </Card>
 
                     {/* SEO Settings */}
-                    <Card>
+                    {/* <Card>
                         <CardHeader>
                             <CardTitle>SEO Settings</CardTitle>
                         </CardHeader>
@@ -281,7 +282,7 @@ export default function UpdateChapterPage({ params }: { params: { id: string } }
                                 />
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                 </div>
 
                 {/* Chapter Content */}

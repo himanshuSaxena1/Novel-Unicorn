@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import redis, { CACHE_KEYS } from "@/lib/redis";
+import { UserRole } from "@prisma/client";
 
 export async function GET(
   req: Request,
@@ -43,7 +44,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } } // Changed from chapterId to id
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -66,7 +67,7 @@ export async function PATCH(
     } = body;
 
     const chapter = await prisma.chapter.findUnique({
-      where: { id: params.id }, // Changed from params.chapterId to params.id
+      where: { id: params.id },
     });
 
     if (!chapter) {
@@ -74,8 +75,11 @@ export async function PATCH(
     }
 
     // Ensure the user is the author or has admin rights
-    if (chapter.authorId !== session.user.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    if (
+      chapter.authorId !== session.user.id &&
+      session?.user?.role !== UserRole.ADMIN
+    ) {
+      return NextResponse.json({ error: "You don't have permission to perform this action." }, { status: 403 });
     }
 
     const updatedChapter = await prisma.chapter.update({

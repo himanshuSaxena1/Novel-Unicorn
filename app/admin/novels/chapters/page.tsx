@@ -4,22 +4,10 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { ArrowLeft, CoinsIcon, Edit, Eye, MoreHorizontal, Plus, Save } from 'lucide-react'
+import { ArrowLeft, CoinsIcon, Copy, Edit, Eye, MoreHorizontal, Plus, Save } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-import CursorResizableEditor from '@/components/TiptapEditor'
 import api from '@/lib/axios'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
@@ -109,6 +97,17 @@ export default function CreateChapterPage() {
         }
     }
 
+
+    const handleCopyLink = (novelSlug: string, chapterSlug: string) => {
+        const link = `${process.env.NEXT_PUBLIC_APP_URL}/novel/${novelSlug}/chapter/${chapterSlug}`;
+        navigator.clipboard.writeText(link).then(() => {
+            toast.success("Chpater link has been copied");
+        }).catch((error) => {
+            console.error("Failed to copy link:", error);
+            toast.error("Failed to copy chapter link.");
+        });
+    };
+
     return (
         <div className="space-y-8">
             {/* Header */}
@@ -185,6 +184,17 @@ export default function CreateChapterPage() {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                        <DropdownMenuItem asChild>
+                                                            <Button
+                                                                variant="link"
+                                                                size="sm"
+                                                                className="gap-1"
+                                                                onClick={() => handleCopyLink(res?.novel.slug, chapter.slug,)}
+                                                            >
+                                                                <Copy className="mr-2 h-4 w-4" />
+                                                                Copy Link
+                                                            </Button>
+                                                        </DropdownMenuItem>
                                                         <DropdownMenuSeparator />
                                                         {/* <DropdownMenuItem asChild>
                                                         <Link href={`/novel/${chapter.novel.slug}/chapter/${chapter.slug}`}>

@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Search, Plus, MoveHorizontal as MoreHorizontal, CreditCard as Edit, Trash2, Eye, Filter, BookOpen, Users, Star } from 'lucide-react'
 import { DeleteButton } from '@/components/DeleteButton'
+import Image from 'next/image'
+import api from '@/lib/axios'
 
 export default function AdminNovelsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -42,14 +44,14 @@ export default function AdminNovelsPage() {
       if (searchQuery) params.set('search', searchQuery)
       if (statusFilter !== 'ALL') params.set('status', statusFilter)
 
-      const response = await fetch(`/api/admin/novels?${params}`)
-      if (!response.ok) throw new Error('Failed to fetch novels')
-      return response.json()
+      const response = await api.get(`/admin/novels?${params}`)
+      if (response.status !== 200) throw new Error('Failed to fetch novels')
+      return response.data
     }
   })
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -161,6 +163,7 @@ export default function AdminNovelsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Cover</TableHead>
                   <TableHead>Novel</TableHead>
                   <TableHead>Author</TableHead>
                   <TableHead>Status</TableHead>
@@ -176,8 +179,16 @@ export default function AdminNovelsPage() {
                 {data?.novels?.map((novel: any) => (
                   <TableRow key={novel.id}>
                     <TableCell>
+                      <Image
+                        src={`${novel.cover}`}
+                        height={60}
+                        width={45}
+                        alt={novel.title}
+                      />
+                    </TableCell>
+                    <TableCell>
                       <div className="space-y-1">
-                        <div className="font-medium">{novel.title}</div>
+                        <div className="font-medium line-clamp-1">{novel.title}</div>
                         <div className="flex space-x-1">
                           {novel.genres?.slice(0, 2).map((genre: string) => (
                             <Badge key={genre} variant="secondary" className="text-xs">

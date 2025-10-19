@@ -41,6 +41,7 @@ export async function GET(
         novel: {
           select: {
             title: true,
+            slug: true,
           },
         },
       },
