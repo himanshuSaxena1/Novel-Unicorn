@@ -4,10 +4,12 @@ import { getNovelBySlug } from "@/lib/queries"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CalendarDays, BookOpen, Eye, CoinsIcon } from "lucide-react"
 import { NovelNotFound } from "@/components/NovelNotFound"
 import { ExpandableSummary } from "@/components/ExpandableSummary"
 import BookMark from "@/components/BookMark"
+import Reviews from "@/components/novel/review"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
@@ -42,7 +44,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                         >
                             {novel.status}
                         </Badge>
-                        {/* language Badge */}
+                        {/* Language Badge */}
                         <Badge className="absolute top-2 left-2" variant={novel.language === 'KOREAN' ? 'default' : novel.language === 'JAPANESE' ? 'secondary' : 'default'}>
                             {novel.language}
                         </Badge>
@@ -61,8 +63,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                 href={`/author/${novel.author.id}`}
                                 className="text-primary hover:underline"
                             >
-                                {/* {novel.author.username} */}
-                                Unique Novels
+                                {novel.author.username || 'Unique Novels'}
                             </Link>
                         </p>
                     </div>
@@ -124,57 +125,66 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                 </div>
             </div>
 
-            {/* Chapters Section */}
-            <section className="mt-12 space-y-4">
-                <h2 className="text-2xl font-semibold">Chapters</h2>
-                <Card>
-                    <CardContent className="p-0 divide-y">
-                        {novel.chapters.lenght === 0 && (
-                            <p className="p-4 text-sm text-muted-foreground">
-                                No chapters available.
-                            </p>
-                        )}
-                        {novel.chapters
-                            .filter((c: { isPublished: boolean }) => c.isPublished)
-                            .sort(
-                                (
-                                    a: { order: number },
-                                    b: { order: number }
-                                ) => a.order - b.order
-                            )
-                            .map((chapter: { slug: string; order: number; title: string; views: number, isLocked: boolean, priceCoins: number }) => (
-                                <Link
-                                    key={chapter.slug}
-                                    href={`/novel/${novel.slug}/chapter/${chapter.slug}`}
-                                    className="group flex items-center justify-between px-2 md:px-4 py-3 transition-colors hover:bg-accent/50"
-                                >
-                                    <div className="text-sm md:text-base flex items-center">
-                                        <span className="text-sm text-muted-foreground mr-2">
-                                            #{chapter.order}
-                                        </span>
-                                        <span className=" font-medium group-hover:text-primary line-clamp-1">
-                                            {chapter.title}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
-                                        {
-                                            chapter.isLocked ? (
-                                                <span className="border border-yellow-600 px-2 py-2 rounded-md flex items-center gap-1">
-                                                    {chapter.priceCoins}
-                                                    <CoinsIcon className="w-4 h-4 text-yellow-600" />
+            {/* Tabs for Chapters and Reviews */}
+            <section className="mt-12">
+                <Tabs defaultValue="chapters" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+                        <TabsTrigger value="chapters">Chapters</TabsTrigger>
+                        <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="chapters">
+                        <Card>
+                            <CardContent className="p-0 divide-y">
+                                {novel.chapters.length === 0 && (
+                                    <p className="p-4 text-sm text-muted-foreground">
+                                        No chapters available.
+                                    </p>
+                                )}
+                                {novel.chapters
+                                    .filter((c: { isPublished: boolean }) => c.isPublished)
+                                    .sort(
+                                        (
+                                            a: { order: number },
+                                            b: { order: number }
+                                        ) => a.order - b.order
+                                    )
+                                    .map((chapter: { slug: string; order: number; title: string; views: number; isLocked: boolean; priceCoins: number }) => (
+                                        <Link
+                                            key={chapter.slug}
+                                            href={`/novel/${novel.slug}/chapter/${chapter.slug}`}
+                                            className="group flex items-center justify-between px-2 md:px-4 py-3 transition-colors hover:bg-accent/50"
+                                        >
+                                            <div className="text-sm md:text-base flex items-center">
+                                                <span className="text-sm text-muted-foreground mr-2">
+                                                    #{chapter.order}
                                                 </span>
-                                            ) : (
-                                                <>
-                                                    <Eye className="h-3 w-3" />
-                                                    {/* {chapter.views} */}Read
-                                                </>
-                                            )
-                                        }
-                                    </div>
-                                </Link>
-                            ))}
-                    </CardContent>
-                </Card>
+                                                <span className="font-medium group-hover:text-primary line-clamp-1">
+                                                    {chapter.title}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+                                                {chapter.isLocked ? (
+                                                    <span className="border border-yellow-600 px-2 py-2 rounded-md flex items-center gap-1">
+                                                        {chapter.priceCoins}
+                                                        <CoinsIcon className="w-4 h-4 text-yellow-600" />
+                                                    </span>
+                                                ) : (
+                                                    <div className="border border-white/50 flex items-center gap-1 rounded px-1 py-1.5">
+                                                        {/* <Eye className="h-3 w-3" /> */}
+                                                        {/* {chapter.views?.toLocaleString() ?? 'Read'} */}
+                                                        READ
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </Link>
+                                    ))}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="reviews">
+                        <Reviews novelId={novel.id} slug={novel.slug} userId={session?.user?.id} />
+                    </TabsContent>
+                </Tabs>
             </section>
         </main>
     )
