@@ -63,7 +63,8 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                 href={`/author/${novel.author.id}`}
                                 className="text-primary hover:underline"
                             >
-                                {novel.author.username || 'Unique Novels'}
+                                {/* {novel.author.username || 'Unique Novels'} */}
+                                Unique Novels
                             </Link>
                         </p>
                     </div>
