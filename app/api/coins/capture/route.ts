@@ -68,9 +68,6 @@ export async function POST(req: Request) {
 
     // Persist in transaction
     await prisma.$transaction(async (tx) => {
-      console.log(
-        `Creating ExternalPayment for user ${userId}, order ${orderId}`
-      );
       const external = await tx.externalPayment.create({
         data: {
           provider: "PAYPAL",
@@ -82,8 +79,6 @@ export async function POST(req: Request) {
           metadata: captureResult,
         },
       });
-
-      console.log(`Creating CoinTransaction for external ${external.id}`);
       await tx.coinTransaction.create({
         data: {
           userId,
@@ -93,17 +88,11 @@ export async function POST(req: Request) {
           metadata: captureResult,
         },
       });
-
-      console.log(`Updating user ${userId} coinBalance by +${coinsGranted}`);
       await tx.user.update({
         where: { id: userId },
         data: { coinBalance: { increment: coinsGranted } },
       });
     });
-
-    console.log(
-      `Capture successful, granted ${coinsGranted} coins to user ${userId}`
-    );
     return NextResponse.json({ success: true, coinsGranted });
   } catch (err: any) {
     console.error("PayPal capture error", err);

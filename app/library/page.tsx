@@ -27,8 +27,6 @@ const LibraryPage = () => {
       try {
         const res = await api.get("/bookmarks");
         setNovels(res.data);
-        console.log(res.data);
-
       } catch (error) {
         console.error("Failed to fetch bookmarks:", error);
       } finally {

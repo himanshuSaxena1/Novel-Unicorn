@@ -1,43 +1,49 @@
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { canAccessAdminPanel } from '@/lib/permissions'
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { canAccessAdminPanel } from "@/lib/permissions";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
+    const session = await getServerSession(authOptions);
+
     if (
       !session?.user ||
       !canAccessAdminPanel(
-        session.user.role as "USER" | "AUTHOR" | "TRANSLATOR" | "EDITOR" | "MODERATOR" | "ADMIN"
+        session.user.role as
+          | "USER"
+          | "AUTHOR"
+          | "TRANSLATOR"
+          | "EDITOR"
+          | "MODERATOR"
+          | "ADMIN"
       )
     ) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '20')
-    const search = searchParams.get('search')
-    const role = searchParams.get('role')
-    const skip = (page - 1) * limit
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const search = searchParams.get("search");
+    const role = searchParams.get("role");
+    const skip = (page - 1) * limit;
 
-    const where: any = {}
-    
+    const where: any = {};
+
     if (search) {
       where.OR = [
-        { username: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } }
-      ]
+        { username: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
+      ];
     }
-    
-    if (role && role !== 'ALL') {
-      where.role = role
+
+    if (role && role !== "ALL") {
+      where.role = role;
     }
 
     const [users, total] = await Promise.all([
@@ -53,32 +59,35 @@ export async function GET(request: NextRequest) {
           avatar: true,
           createdAt: true,
           emailVerified: true,
+          coinBalance: true,
           subscriptions: {
             where: {
-              status: 'ACTIVE',
-              endDate: { gt: new Date() }
+              status: "ACTIVE",
+              endDate: { gt: new Date() },
             },
             include: { plan: true },
-            orderBy: { createdAt: 'desc' },
-            take: 1
-          }
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip,
-        take: limit
+        take: limit,
       }),
-      prisma.user.count({ where })
-    ])
-    
+      prisma.user.count({ where }),
+    ]);
 
     return NextResponse.json({
       users,
       total,
       pages: Math.ceil(total / limit),
-      currentPage: page
-    })
+      currentPage: page,
+    });
   } catch (error) {
-    console.error('Error fetching users:', error)
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
+    console.error("Error fetching users:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch users" },
+      { status: 500 }
+    );
   }
 }

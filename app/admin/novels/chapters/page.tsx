@@ -39,7 +39,6 @@ export default function CreateChapterPage() {
         queryFn: async () => {
             const response = await api.get(`/admin/novels/${id}`)
             if (response.status !== 200) throw new Error('Failed to fetch chapters')
-            console.log(response.data);
             return response.data || {}
         }
     })

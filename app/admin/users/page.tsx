@@ -22,7 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Search, MoveHorizontal as MoreHorizontal, CreditCard as Edit, Ban, Crown, Users, UserCheck, UserX, Shield } from 'lucide-react'
+import { Search, MoveHorizontal as MoreHorizontal, CreditCard as Edit, Ban, Crown, Users, UserCheck, UserX, Shield, Coins } from 'lucide-react'
 import Link from 'next/link'
 
 const ROLE_COLORS = {
@@ -164,7 +164,7 @@ export default function AdminUsersPage() {
                   <TableHead>User</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
-                  <TableHead>Subscription</TableHead>
+                  <TableHead>Coins</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Joined</TableHead>
                   <TableHead className="w-[100px]">Actions</TableHead>
@@ -189,18 +189,9 @@ export default function AdminUsersPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {user.subscriptions?.length > 0 ? (
-                          <>
-                            <div className={`w-2 h-2 rounded-full ${SUBSCRIPTION_COLORS[user.subscriptions[0].plan.tier as keyof typeof SUBSCRIPTION_COLORS]}`} />
-                            <span>{user.subscriptions[0].plan.tier}</span>
-                          </>
-                        ) : (
-                          <>
-                            <div className="w-2 h-2 rounded-full bg-gray-500" />
-                            <span>FREE</span>
-                          </>
-                        )}
+                      <div className="flex items-center gap-1">
+                        {user.coinBalance}
+                        <Coins className='text-yellow-500'/>
                       </div>
                     </TableCell>
                     <TableCell>

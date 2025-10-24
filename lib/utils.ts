@@ -60,3 +60,38 @@ export const PACKAGES: Package[] = [
       "The best choice for power users with unlimited access to all premium content and perks.",
   },
 ];
+
+export function formatTimeAgo(date: Date | string): string {
+  const now = new Date();
+  const past = typeof date === "string" ? new Date(date) : date;
+
+  // Ensure the date is valid
+  if (isNaN(past.getTime())) {
+    return "Invalid date";
+  }
+
+  const seconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+  // Define time intervals in seconds
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+  };
+
+  // Check each interval
+  for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+    const interval = Math.floor(seconds / secondsInUnit);
+    if (interval >= 1) {
+      return `${interval} ${unit}${interval === 1 ? "" : "s"} ago`;
+    }
+  }
+
+  // Less than a minute
+  return seconds <= 0
+    ? "Just now"
+    : `${seconds} second${seconds === 1 ? "" : "s"} ago`;
+}
