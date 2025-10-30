@@ -7,9 +7,9 @@ export function determineCoinsForAmount(amountUSD: number): number {
   if (!amountUSD || amountUSD <= 0) return 0;
 
   // Match the exact product tiers
-  if (amountUSD >= 99.99) return 12000;
-  if (amountUSD >= 49.99) return 5500;
-  if (amountUSD >= 29.99) return 3200;
+  if (amountUSD >= 99.99) return 11000;
+  if (amountUSD >= 49.99) return 5100;
+  if (amountUSD >= 29.99) return 3000;
   if (amountUSD >= 9.99) return 1000;
 
   // Fallback for non-tier amounts (rare case)
