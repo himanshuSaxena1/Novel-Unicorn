@@ -11,6 +11,7 @@ import api from "@/lib/axios"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { UserRole } from "@prisma/client"
+import { useQueryClient } from "@tanstack/react-query";
 
 interface User {
   id: string
@@ -24,6 +25,7 @@ interface User {
 }
 
 const EditUserPage = () => {
+  const queryClient = useQueryClient();
   const router = useRouter()
   const { id } = useParams()
   const [formData, setFormData] = useState<User>({
@@ -50,29 +52,34 @@ const EditUserPage = () => {
 
   useEffect(() => {
     if (user) {
-      setFormData(user)
+      setFormData({
+        ...user,
+        coinBalance: user.coinBalance ?? 0, 
+      });
     }
-  }, [user])
+  }, [user]);
 
   // Mutation for updating user
   const mutation = useMutation({
     mutationFn: async (updatedData: Partial<User>) => {
-      const response = await api.patch(`/user/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
-      })
-      if (!response) throw new Error("Failed to update user")
-      return response.data
+      const response = await api.patch(`/user/${id}`, updatedData); // Remove manual JSON/stringify
+      return response.data;
     },
-    onSuccess: () => {
-      toast.success("User updated successfully")
-      router.push("/admin/users") 
+    onSuccess: (data) => {
+      toast.success("User updated successfully");
+
+      // Update cache immediately
+      queryClient.setQueryData(["user", id], data);
+
+      // Optionally invalidate list
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+
+      router.push("/admin/users");
     },
-    onError: (error) => {
-      toast.error(`${error.message}`)
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to update user");
     },
-  })
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,15 +87,19 @@ const EditUserPage = () => {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "coinBalance" ? (value === "" ? "" : Number(value)) : value,
+    }));
+  };
 
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
-        Loading novel data...
+        Loading user data...
       </div>
     )
   }
@@ -151,7 +162,8 @@ const EditUserPage = () => {
         <Input
           name="coinBalance"
           type="number"
-          value={formData.coinBalance}
+          min="0"
+          value={formData.coinBalance ?? ""}
           onChange={handleChange}
           placeholder="Coin Balance"
         />

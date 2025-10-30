@@ -7,38 +7,40 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const body = await req.json();
-    const { email, username, firstName, lastName, avatar, coinBalance, role } = body;
+    const { username, firstName, lastName, avatar, coinBalance, role } = body;
 
-    // Validate input (basic check)
     if (!id) {
-      return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "User ID is required" }, { status: 400 });
     }
 
-    // Update user (only allow editing certain fields)
+    // Build update data only with provided fields
+    const updateData: any = {};
+    if (username !== undefined) updateData.username = username;
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (avatar !== undefined) updateData.avatar = avatar;
+    if (role !== undefined) updateData.role = role;
+
+    // Handle coinBalance carefully
+    if (coinBalance !== undefined && coinBalance !== null && coinBalance !== "") {
+      const parsed = parseInt(coinBalance, 10);
+      if (!isNaN(parsed) && parsed >= 0) {
+        updateData.coinBalance = parsed;
+      }
+      // else: ignore invalid input, keep old value
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: {
-        username,
-        firstName,
-        lastName,
-        avatar,
-        coinBalance: parseInt(coinBalance, 10) || 0,
-        role,
-      },
+      data: updateData,
     });
 
     return NextResponse.json(updatedUser);
   } catch (error) {
     console.error("Error updating user:", error);
-    return NextResponse.json(
-      { error: "Failed to update user" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
   }
 }
 
