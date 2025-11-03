@@ -94,9 +94,8 @@ export default function CreateChapterPage() {
                 throw new Error(error.error || 'Failed to create chapter')
             }
 
-            const chapter = await response.json()
             toast.success('Chapter created successfully!')
-            router.push('/admin/chapters')
+            router.push(`/admin/novels/chapters?novelId=${formData.novelId}`)
         } catch (error: any) {
             toast.error(error.message || 'Failed to create chapter')
         } finally {

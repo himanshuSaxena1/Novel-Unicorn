@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -42,23 +42,37 @@ const SORT_OPTIONS = [
 
 export default function BrowsePage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
-  
+
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
-    genres: searchParams.get('genres')?.split(',') || [],
+    genres: searchParams.get('genres')?.split(',').filter(Boolean) || [],
     status: searchParams.get('status') || '',
     sortBy: searchParams.get('sortBy') || 'createdAt',
     sortOrder: searchParams.get('sortOrder') || 'desc',
     page: parseInt(searchParams.get('page') || '1')
   })
 
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (filters.search) params.set('search', filters.search)
+    if (filters.genres.length > 0) params.set('genres', filters.genres.join(','))
+    if (filters.status) params.set('status', filters.status)
+    if (filters.sortBy) params.set('sortBy', filters.sortBy)
+    if (filters.sortOrder) params.set('sortOrder', filters.sortOrder)
+    params.set('page', filters.page.toString())
+
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [filters, pathname, router])
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['browse-novels', filters],
     queryFn: async () => {
       const params = new URLSearchParams()
-      
       if (filters.search) params.set('search', filters.search)
       if (filters.genres.length > 0) params.set('genres', filters.genres.join(','))
       if (filters.status) params.set('status', filters.status)
@@ -74,14 +88,14 @@ export default function BrowsePage() {
   })
 
   const updateFilters = (newFilters: Partial<typeof filters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters, page: 1 }))
+    setFilters(prev => ({ ...prev, ...newFilters }))
   }
 
   const toggleGenre = (genre: string) => {
     const newGenres = filters.genres.includes(genre)
       ? filters.genres.filter(g => g !== genre)
       : [...filters.genres, genre]
-    updateFilters({ genres: newGenres })
+    updateFilters({ genres: newGenres, page: 1 })
   }
 
   const clearFilters = () => {
@@ -95,30 +109,88 @@ export default function BrowsePage() {
     })
   }
 
+  // Dynamic pagination buttons
+  const renderPagination = () => {
+    if (!data?.pages || data.pages <= 1) return null
+
+    const maxButtons = 5
+    const currentPage = filters.page
+    const totalPages = data.pages
+
+    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2))
+    let endPage = Math.min(totalPages, startPage + maxButtons - 1)
+
+    if (endPage - startPage + 1 < maxButtons) {
+      startPage = Math.max(1, endPage - maxButtons + 1)
+    }
+
+    const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i)
+
+    return (
+      <div className="flex justify-center mt-12 space-x-2">
+        <Button
+          variant="outline"
+          disabled={filters.page === 1}
+          onClick={() => updateFilters({ page: filters.page - 1 })}
+        >
+          Previous
+        </Button>
+        {startPage > 1 && (
+          <>
+            <Button variant="outline" onClick={() => updateFilters({ page: 1 })}>
+              1
+            </Button>
+            {startPage > 2 && <span className="px-2">...</span>}
+          </>
+        )}
+        {pages.map(page => (
+          <Button
+            key={page}
+            variant={filters.page === page ? 'default' : 'outline'}
+            onClick={() => updateFilters({ page })}
+          >
+            {page}
+          </Button>
+        ))}
+        {endPage < totalPages && (
+          <>
+            {endPage < totalPages - 1 && <span className="px-2">...</span>}
+            <Button variant="outline" onClick={() => updateFilters({ page: totalPages })}>
+              {totalPages}
+            </Button>
+          </>
+        )}
+        <Button
+          variant="outline"
+          disabled={filters.page === totalPages}
+          onClick={() => updateFilters({ page: filters.page + 1 })}
+        >
+          Next
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-[70vh] bg-background">
       <div className="max-w-6xl mx-auto px-4 py-8">
-
         {/* Search and Controls */}
         <div className="mb-8 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search novels, authors, genres..."
                 className="pl-10"
                 value={filters.search}
-                onChange={(e) => updateFilters({ search: e.target.value })}
+                onChange={(e) => updateFilters({ search: e.target.value, page: 1 })}
               />
             </div>
-
-            {/* Sort */}
             <Select
               value={`${filters.sortBy}-${filters.sortOrder}`}
               onValueChange={(value) => {
                 const [sortBy, sortOrder] = value.split('-')
-                updateFilters({ sortBy, sortOrder: sortOrder as 'asc' | 'desc' })
+                updateFilters({ sortBy, sortOrder: sortOrder as 'asc' | 'desc', page: 1 })
               }}
             >
               <SelectTrigger className="w-full md:w-48">
@@ -132,8 +204,6 @@ export default function BrowsePage() {
                 ))}
               </SelectContent>
             </Select>
-
-            {/* View Mode */}
             <div className="flex border rounded-lg">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -152,8 +222,6 @@ export default function BrowsePage() {
                 <List className="h-4 w-4" />
               </Button>
             </div>
-
-            {/* Filter Toggle */}
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
@@ -163,8 +231,6 @@ export default function BrowsePage() {
               <span>Filters</span>
             </Button>
           </div>
-
-          {/* Active Filters */}
           {(filters.genres.length > 0 || filters.status) && (
             <div className="flex flex-wrap gap-2 items-center">
               <span className="text-sm text-muted-foreground">Active filters:</span>
@@ -174,7 +240,7 @@ export default function BrowsePage() {
                 </Badge>
               ))}
               {filters.status && (
-                <Badge variant="secondary" className="cursor-pointer" onClick={() => updateFilters({ status: '' })}>
+                <Badge variant="secondary" className="cursor-pointer" onClick={() => updateFilters({ status: '', page: 1 })}>
                   {STATUS_OPTIONS.find(s => s.value === filters.status)?.label} ×
                 </Badge>
               )}
@@ -186,7 +252,6 @@ export default function BrowsePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 relative">
-          {/* Filters Sidebar */}
           {showFilters && (
             <div className="lg:col-span-1 absolute right-0 -top-4">
               <Card>
@@ -197,10 +262,9 @@ export default function BrowsePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Status Filter */}
                   <div>
                     <h4 className="font-medium mb-3">Status</h4>
-                    <Select value={filters.status} onValueChange={(value) => updateFilters({ status: value })}>
+                    <Select value={filters.status} onValueChange={(value) => updateFilters({ status: value, page: 1 })}>
                       <SelectTrigger>
                         <SelectValue placeholder="All Status" />
                       </SelectTrigger>
@@ -214,8 +278,6 @@ export default function BrowsePage() {
                       </SelectContent>
                     </Select>
                   </div>
-
-                  {/* Genre Filter */}
                   <div>
                     <h4 className="font-medium mb-3">Genres</h4>
                     <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -238,7 +300,6 @@ export default function BrowsePage() {
             </div>
           )}
 
-          {/* Results */}
           <div className={showFilters ? 'lg:col-span-4' : 'lg:col-span-6'}>
             {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -265,57 +326,20 @@ export default function BrowsePage() {
               </div>
             ) : (
               <>
-                {/* Results Info */}
                 <div className="flex justify-between items-center mb-6">
                   <p className="text-muted-foreground">
                     Showing {data?.novels?.length || 0} of {data?.total || 0} novels
                   </p>
                 </div>
-
-                {/* Novels Grid */}
-                <div className={`grid gap-6 ${
-                  viewMode === 'grid' 
-                    ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4' 
+                <div className={`grid gap-6 ${viewMode === 'grid'
+                    ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
                     : 'grid-cols-1'
-                }`}>
+                  }`}>
                   {data?.novels?.map((novel: any) => (
                     <NovelCard key={novel.id} {...novel} viewMode={viewMode} />
                   ))}
                 </div>
-
-                {/* Pagination */}
-                {data?.pages > 1 && (
-                  <div className="flex justify-center mt-12 space-x-2">
-                    <Button
-                      variant="outline"
-                      disabled={filters.page === 1}
-                      onClick={() => updateFilters({ page: filters.page - 1 })}
-                    >
-                      Previous
-                    </Button>
-                    
-                    {Array.from({ length: Math.min(5, data.pages) }, (_, i) => {
-                      const page = i + 1
-                      return (
-                        <Button
-                          key={page}
-                          variant={filters.page === page ? 'default' : 'outline'}
-                          onClick={() => updateFilters({ page })}
-                        >
-                          {page}
-                        </Button>
-                      )
-                    })}
-                    
-                    <Button
-                      variant="outline"
-                      disabled={filters.page === data.pages}
-                      onClick={() => updateFilters({ page: filters.page + 1 })}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                )}
+                {renderPagination()}
               </>
             )}
           </div>
