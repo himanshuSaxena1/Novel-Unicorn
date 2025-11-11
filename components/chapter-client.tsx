@@ -11,6 +11,7 @@ import api from "@/lib/axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import ChapterComments from "./ChapterComments";
 
 export function ChapterClient({ data }: { data: any }) {
     const router = useRouter();
@@ -167,6 +168,8 @@ export function ChapterClient({ data }: { data: any }) {
                         </Button>
                     )}
                 </div>
+
+                <ChapterComments chapterId={chapter.id} />
             </main>
         </ReaderProvider>
     );

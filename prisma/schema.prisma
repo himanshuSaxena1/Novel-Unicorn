@@ -82,6 +82,7 @@ model User {
   CoinTransaction CoinTransaction[]
   ChapterPurchase ChapterPurchase[]
   ExternalPayment ExternalPayment[]
+  chapterComments ChapterComment[]
 
   @@map("users")
 }
@@ -217,7 +218,9 @@ model Chapter {
   // Relations
   readingProgress ReadingProgress[]
   ChapterPurchase ChapterPurchase[]
+  chapterComments ChapterComment[]
 
+  
   @@unique([novelId, slug])
   @@map("chapters")
 }
@@ -240,6 +243,29 @@ model Review {
   @@map("reviews")
 }
 
+
+model ChapterComment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  chapterId String
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Replies (self-reference)
+  parentId String?
+  parent   ChapterComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  ChapterComment[] @relation("CommentReplies")
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([chapterId])
+  @@index([authorId])
+  @@map("chapter_comments")
+}
 model Bookmark {
   id String @id @default(cuid())
 
