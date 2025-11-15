@@ -5,16 +5,17 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { 
-  LayoutDashboard, 
-  BookOpen, 
-  Users, 
-  CreditCard, 
-  Settings, 
+import {
+  LayoutDashboard,
+  BookOpen,
+  Users,
+  CreditCard,
+  Settings,
   FileText,
   Menu,
   BarChart3,
-  Crown
+  Crown,
+  MessageSquareMore
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -22,6 +23,7 @@ const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Novels', href: '/admin/novels', icon: BookOpen },
   { name: 'Chapters', href: '/admin/chapters', icon: FileText },
+  { name: 'Comments', href: "/admin/comments", icon: MessageSquareMore },
   { name: 'Users', href: '/admin/users', icon: Users },
   { name: 'Subscriptions', href: '/admin/coins', icon: Crown },
   { name: 'Payments', href: '/admin/payments', icon: CreditCard },
@@ -81,7 +83,7 @@ function AdminSidebar() {
           <span className="text-xl font-bold">Admin Panel</span>
         </Link>
       </div>
-      
+
       <nav className="flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
           <li>
@@ -104,7 +106,7 @@ function AdminSidebar() {
               ))}
             </ul>
           </li>
-          
+
           <li className="mt-auto">
             <Link
               href="/"
