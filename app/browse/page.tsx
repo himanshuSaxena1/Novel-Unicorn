@@ -79,7 +79,7 @@ export default function BrowsePage() {
       params.set('sortBy', filters.sortBy)
       params.set('sortOrder', filters.sortOrder)
       params.set('page', filters.page.toString())
-      params.set('limit', '12')
+      params.set('limit', '15')
 
       const response = await fetch(`/api/novels?${params.toString()}`)
       if (!response.ok) throw new Error('Failed to fetch novels')

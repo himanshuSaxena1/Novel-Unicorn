@@ -42,7 +42,7 @@ export default function NovelCard({
   language,
 }: NovelCardProps) {
   const authorName = typeof author === 'string' ? author : author?.username
-
+  
   if (viewMode === 'list') {
     return (
       <Card className="group hover:shadow-lg transition-all duration-300">
@@ -101,7 +101,7 @@ export default function NovelCard({
   }
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/5">
+    <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/5 bg-transparent">
       <div className="relative overflow-hidden rounded-t-lg">
         <div className="aspect-[3/4] relative">
           <Image
@@ -114,13 +114,13 @@ export default function NovelCard({
 
           {/* Status Badge */}
           <Badge
-            className="absolute top-2 right-2"
+            className="absolute top-2 right-2 text-[9px] md:text-[10px]"
             variant={status === 'COMPLETED' ? 'default' : 'secondary'}
           >
             {status}
           </Badge>
           {/* Language Badge */}
-          <Badge className="absolute top-2 left-2" variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'default'}>
+          <Badge className="absolute top-2 left-2 text-[9px] md:text-[10px]" variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'default'}>
             {language}
           </Badge>
 
@@ -135,9 +135,9 @@ export default function NovelCard({
         </div>
       </div>
 
-      <CardContent className="p-2 space-y-3 ">
+      <CardContent className="py-2 px-0 space-y-3 ">
         <div>
-          <h3 className="font-semibold text-base sm:text-lg line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-base sm:text-base text-black dark:text-white  line-clamp-2 transition-colors">
             <Link href={`/novel/${slug}`}>
               {title}
             </Link>

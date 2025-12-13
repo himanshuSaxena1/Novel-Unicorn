@@ -132,7 +132,7 @@ export default function AdminCommentsPage() {
                                         <div className="space-y-2">
                                             {c.replies.map((r: any) => (
                                                 <div key={r.id} className="text-sm text-gray-700">
-                                                    <strong className="text-blue-500">{r.author.username}</strong>:
+                                                    <strong className="text-blue-500">{r?.author?.username}</strong>:
                                                     <span className="ml-1">{r.content}</span>
                                                 </div>
                                             ))}

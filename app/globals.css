@@ -80,3 +80,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* globals.css */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Snap scrolling on mobile */
+@media (max-width: 640px) {
+  .snap-scroll > div > * {
+    scroll-snap-align: start;
+  }
+  .snap-scroll {
+    scroll-snap-type: x mandatory;
+    scroll-padding: 1rem;
+  }
+}

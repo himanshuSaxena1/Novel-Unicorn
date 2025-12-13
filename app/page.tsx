@@ -3,6 +3,7 @@ export const revalidate = 0;
 
 import HeroCarousel from '@/components/HeroCarousel'
 import HomePage from '@/components/Home'
+import NewChapter from '@/components/new-chapter';
 import { Button } from '@/components/ui/button';
 import { NovelAPI } from '@/lib/api';
 import Link from 'next/link';
@@ -26,6 +27,8 @@ export default async function page() {
   const result = await NovelAPI.getNovelsByFilters()
   const dataa = await result
 
+  const popularNovels = await NovelAPI.getPopularNovels(undefined, 9)
+
   // const { data: recentNovels = [] } = useQuery({
   //   queryKey: ['recent-novels'],
   //   queryFn: async () => {
@@ -37,11 +40,12 @@ export default async function page() {
 
   return (
     <div className='min-h-screen  bg-background'>
-      <div className='max-w-6xl mx-auto'>
+      <div className=''>
         <HeroCarousel initialNovels={featuredNovels} />
-        <HomePage trendingNovels={trendingNovels} recentNovels={dataa} />
+        <HomePage trendingNovels={trendingNovels} recentNovels={dataa} popularNovels={popularNovels} />
       </div>
-      <section className="py-8 px-4 bg-gradient-to-r from-primary/70 to-blue-700">
+      <NewChapter />
+      <section className="py-8 px-4 bg-gradient-to-r from-primary/60 to-blue-800">
         <div className="container mx-auto text-center text-white">
           <div className="space-y-6 max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold">Unlock Premium Content</h2>

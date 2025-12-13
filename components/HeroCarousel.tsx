@@ -103,14 +103,20 @@ export default function HeroCarousel({ initialNovels }: HeroCarouselProps) {
                   src={novel.cover || "https://images.pexels.com/photos/694740/pexels-photo-694740.jpeg"}
                   alt={novel.title}
                   fill
-                  className="object-cover"
+                  className="object-cover bg-blend-multiply"
                   priority={index === 0}
                 />
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+                <div className="absolute inset-0 z-0 bg-blend-multiply">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-slate-900 to-black" />
+                  <div className="absolute inset-0 opacity-20">
+                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500 rounded-full blur-3xl" />
+                  </div>
+                </div>
               </div>
               <div className="relative z-10 h-full flex items-center">
-                <div className="container mx-auto px-4">
-                  <div className="flex flex-col md:flex-row justify-center gap-8 items-center px-0 md:px-2 lg:px-6 xl:px-10 2xl:px-16">
+                <div className="max-w-6xl mx-auto w-full">
+                  <div className="flex flex-col md:flex-row justify-between gap-8 w-full items-center px-0 md:px-2 lg:px-6 xl:px-10 2xl:px-16">
                     <div className="flex justify-center items-center">
                       <div className="relative w-56 md:w-60 md:h-80 h-72 rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
                         <Image
@@ -127,7 +133,7 @@ export default function HeroCarousel({ initialNovels }: HeroCarouselProps) {
                         </div>
                       </div>
                     </div>
-                    <div className="text-white space-y-3 md:space-y-6 flex-1">
+                    <div className="text-white space-y-3 md:space-y-6 flex-1 px-4 md:px-0">
                       <div className="space-y-2">
                         <h1 className="text-xl lg:text-2xl xl:text-3xl 2xl:text-3xl font-bold leading-tight">
                           {novel.title}
@@ -165,7 +171,7 @@ export default function HeroCarousel({ initialNovels }: HeroCarouselProps) {
                         <Button
                           size="lg"
                           variant="outline"
-                          className="border-white text-black bg-white hover:bg-black hover:text-white dark:text-white dark:hover:bg-white dark:hover:text-black bg-transparent"
+                          className="border-white  bg-white hover:bg-black text-white hover:text-white dark:text-white dark:hover:bg-white dark:hover:text-black bg-transparent"
                         >
                           Add to Library
                         </Button>
@@ -196,11 +202,11 @@ export default function HeroCarousel({ initialNovels }: HeroCarouselProps) {
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 flex space-x-1.5">
             {slides.map((_, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${index === selectedIndex ? "bg-white" : "bg-white/50"
+                className={`w-7 h-1.5 rounded-full transition-colors ${index === selectedIndex ? "bg-white" : "bg-white/50"
                   }`}
                 onClick={() => emblaApi?.scrollTo(index)}
                 aria-label={`Go to slide ${index + 1}`}

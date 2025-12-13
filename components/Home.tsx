@@ -3,25 +3,21 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import NovelCard from '@/components/NovelCard'
 import { Search, TrendingUp, Clock, Star, ArrowRight, BookOpen, Users, Award } from 'lucide-react'
+import PopularWorks from './popular-works'
 
-export default function HomePage({ recentNovels, trendingNovels }: any) {
+export default function HomePage({ recentNovels, trendingNovels, popularNovels }: any) {
 
 
 
     return (
-        <div className="min-h-screen  bg-background">
-            <div className='max-w-6xl mx-auto'>
-
-                {/* Hero Section */}
-
-
+        <div className="min-h-screen  ">
+            <div className=''>
                 {/* Trending Section */}
-
-                <section className="py-16 px-4 bg-muted/30">
-                    <div className="container mx-auto">
-                        <div className="flex items-center justify-between mb-8">
+                <section className="bg-gradient-to-t from-lime-300/60 dark:from-red-300 via-green-100 to-violet-100 dark:to-yellow-100">
+                    <div className="py-8 md:py-16 px-4 max-w-6xl mx-auto">
+                        <div className="flex items-center justify-between mb-6">
                             <div className="space-y-2">
-                                <h2 className="text-xl md:text-3xl font-bold flex items-center">
+                                <h2 className="text-xl md:text-3xl text-black  font-bold flex items-center">
                                     <TrendingUp className="mr-3 h-6 w-6 text-green-500" />
                                     Trending Now
                                 </h2>
@@ -35,23 +31,28 @@ export default function HomePage({ recentNovels, trendingNovels }: any) {
                             </Button>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
-                            {trendingNovels.slice(0, 5).map((novel: any, index: number) => (
-                                <div key={novel.id} className="relative">
-                                    <Badge className="absolute -top-2 -left-2 z-10 bg-green-500 text-white">
-                                        #{index + 1}
-                                    </Badge>
-                                    <NovelCard {...novel} showDetails={false} />
-                                </div>
-                            ))}
+                        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 z-50">
+                            <div className="flex gap-3 sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 py-2">
+                                {trendingNovels.slice(0, 6).map((novel: any, index: number) => (
+                                    <div key={novel.id} className="relative min-w-[140px] sm:min-w-0">
+                                        <Badge className="absolute -top-2 -left-3 z-10 bg-green-500 text-white border border-white">
+                                            #{index + 1}
+                                        </Badge>
+                                        <NovelCard {...novel} showDetails={false} />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
+
                     </div>
                 </section>
 
+                <PopularWorks initialNovels={popularNovels} />
+
                 {/* Recently Updated */}
-                <section className="py-16 px-4">
-                    <div className="container mx-auto">
-                        <div className="flex items-center justify-between mb-8">
+                <section className="">
+                    <div className="py-8 md:py-16 px-4 max-w-6xl mx-auto">
+                        <div className="flex items-center justify-between mb-6">
                             <div className="space-y-2">
                                 <h2 className="text-xl md:text-3xl font-bold flex items-center">
                                     <Clock className="mr-3 h-6 w-6 text-blue-500" />
@@ -67,11 +68,16 @@ export default function HomePage({ recentNovels, trendingNovels }: any) {
                             </Button>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
-                            {recentNovels.novels?.slice(0, 5).map((novel: any) => (
-                                <NovelCard key={novel.id} {...novel} />
-                            ))}
+                        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+                            <div className="flex gap-3 sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 py-2">
+                                {recentNovels.novels?.slice(0, 6).map((novel: any) => (
+                                    <div key={novel.id} className="min-w-[140px] sm:min-w-0">
+                                        <NovelCard {...novel} />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
+
                     </div>
                 </section>
             </div>

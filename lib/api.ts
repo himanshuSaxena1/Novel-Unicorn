@@ -182,6 +182,84 @@ export class NovelAPI {
       currentPage: filters.page,
     };
   }
+
+  static async getPopularNovels(genre?: string, limit = 9) {
+    const where = genre && genre !== "entire" ? { genres: { has: genre } } : {};
+
+    const novels = await prisma.novel.findMany({
+      where: {
+        isPublished: true,
+        ...where,
+      },
+      orderBy: {
+        views: "desc",
+      },
+      take: limit,
+      include: {
+        author: {
+          select: {
+            username: true,
+          },
+        },
+        _count: {
+          select: {
+            chapters: true,
+          },
+        },
+      },
+    });
+
+    return novels.map((novel) => ({
+      id: novel.id,
+      title: novel.title,
+      slug: novel.slug,
+      cover: novel.cover,
+      author: {
+        username: novel.author.username,
+      },
+      genres: novel.genres,
+      rating: novel.rating,
+      views: novel.views,
+      chapterCount: novel._count.chapters,
+    }));
+  }
+
+  // lib/api.ts
+  static async getLatestUpdatedNovels(limit = 6) {
+    const novels = await prisma.novel.findMany({
+      where: { isPublished: true },
+      orderBy: { updatedAt: "desc" },
+      take: limit,
+      include: {
+        chapters: {
+          select: { id: true, title: true, createdAt: true },
+          orderBy: { order: "desc" },
+          take: 1,
+        },
+        reviews: {
+          select: { rating: true },
+        },
+      },
+    });
+
+    return novels.map((novel) => {
+      const avgRating =
+        novel.reviews.length > 0
+          ? novel.reviews.reduce((sum, r) => sum + r.rating, 0) /
+            novel.reviews.length
+          : null;
+
+      return {
+        id: novel.id,
+        title: novel.title,
+        slug: novel.slug,
+        cover: novel.cover,
+        latestChapter: novel.chapters[0] ?? null,
+        updatedAt: novel.updatedAt,
+        rating: avgRating,
+      };
+    });
+  }
 }
 
 export class SubscriptionAPI {
