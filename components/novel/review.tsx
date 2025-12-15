@@ -79,7 +79,7 @@ export default function Reviews({ novelId, slug, userId }: { novelId: string, sl
         <section className="mt-12 space-y-4">
             <h2 className="text-2xl font-semibold">Reviews</h2>
             <Card>
-                <CardContent className="p-6 space-y-6">
+                <CardContent className="p-2 md:p-6 space-y-6">
                     {/* Review Form */}
                     {userId ? (
                         <div className="space-y-4">

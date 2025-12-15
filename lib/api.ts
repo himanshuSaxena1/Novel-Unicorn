@@ -228,12 +228,15 @@ export class NovelAPI {
   static async getLatestUpdatedNovels(limit = 6) {
     const novels = await prisma.novel.findMany({
       where: { isPublished: true },
-      orderBy: { updatedAt: "desc" },
-      take: limit,
       include: {
         chapters: {
-          select: { id: true, title: true, createdAt: true },
-          orderBy: { order: "desc" },
+          select: {
+            id: true,
+            title: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          orderBy: { updatedAt: "desc" }, // latest chapter first
           take: 1,
         },
         reviews: {
@@ -242,23 +245,26 @@ export class NovelAPI {
       },
     });
 
-    return novels.map((novel) => {
-      const avgRating =
-        novel.reviews.length > 0
-          ? novel.reviews.reduce((sum, r) => sum + r.rating, 0) /
-            novel.reviews.length
-          : null;
+    return novels
+      .filter((n) => n.chapters.length > 0)
+      .sort(
+        (a, b) =>
+          b.chapters[0].updatedAt.getTime() - a.chapters[0].updatedAt.getTime()
+      )
+      .slice(0, limit)
+      .map((novel) => {
+        const latestChapter = novel.chapters[0];
 
-      return {
-        id: novel.id,
-        title: novel.title,
-        slug: novel.slug,
-        cover: novel.cover,
-        latestChapter: novel.chapters[0] ?? null,
-        updatedAt: novel.updatedAt,
-        rating: avgRating,
-      };
-    });
+        return {
+          id: novel.id,
+          title: novel.title,
+          slug: novel.slug,
+          cover: novel.cover,
+          latestChapter,
+          updatedAt: latestChapter.updatedAt, // ✅ use THIS
+          rating: null,
+        };
+      });
   }
 }
 

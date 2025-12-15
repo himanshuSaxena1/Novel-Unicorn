@@ -30,7 +30,7 @@ export async function GET(
       where: { novelId: novel.id },
       include: {
         user: {
-          select: { username: true, id: true },
+          select: { username: true, id: true, avatar: true},
         },
       },
       orderBy: { createdAt: "desc" },

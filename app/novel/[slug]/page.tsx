@@ -22,50 +22,63 @@ export default async function NovelPage({ params }: { params: { slug: string } }
     return (
         <main className="mx-auto max-w-6xl px-4 py-8 md:py-12 min-h-[70vh]">
             {/* Header Section */}
-            <div className="grid gap-8 md:grid-cols-[280px,1fr] items-start">
-                {/* Cover */}
-                <div className="flex justify-center md:justify-start">
-                    <div className="relative aspect-[3/4] w-60 overflow-hidden rounded-lg border bg-muted shadow-sm">
+            <div className="grid gap-6 md:gap-8 md:grid-cols-[280px,1fr] items-start">
+                {/* Cover + Title (Mobile Header) */}
+                <div className="flex gap-4 md:block">
+                    {/* Cover */}
+                    <div className="relative aspect-[3/4] w-24 md:w-60 shrink-0 overflow-hidden rounded-lg border bg-muted shadow-sm">
                         <Image
-                            src={
-                                novel.cover ||
-                                "/placeholder.svg?height=400&width=300&query=novel%20cover"
-                            }
+                            src={novel.cover || "/placeholder.svg?height=400&width=300"}
                             alt={`${novel.title} cover`}
-                            width={300}
-                            height={400}
-                            className="h-full w-full object-cover"
+                            fill
+                            className="object-cover"
                             priority
                         />
+
                         {/* Status Badge */}
                         <Badge
-                            className="absolute top-2 right-2"
-                            variant={novel.status === 'COMPLETED' ? 'default' : 'secondary'}
+                            className="hidden md:inline absolute top-2 right-2 text-xs"
+                            variant={novel.status === "COMPLETED" ? "default" : "secondary"}
                         >
                             {novel.status}
                         </Badge>
+
                         {/* Language Badge */}
-                        <Badge className="absolute top-2 left-2" variant={novel.language === 'KOREAN' ? 'default' : novel.language === 'JAPANESE' ? 'secondary' : 'default'}>
+                        <Badge
+                            className="hidden md:inline absolute top-2 left-2 text-xs"
+                            variant="secondary"
+                        >
                             {novel.language}
                         </Badge>
                     </div>
+
+                    {/* Mobile Title + Meta */}
+                    <div className="flex flex-col justify-between md:hidden">
+                        <div>
+                            <h1 className="text-lg mt-1 font-bold leading-tight">
+                                {novel.title}
+                            </h1>
+                            <div className="flex items-center gap-3">
+                                <p className="md:hidden text-sm text-muted-foreground mt-1">
+                                    Language: <span className="text-primary">{novel.language}</span>
+                                </p>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    by: <span className="text-primary">Unique Novels</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Novel Info */}
+                {/* Novel Info (Desktop + Shared) */}
                 <div className="space-y-4">
-                    <div>
-                        <h1 className="text-xl md:text-2xl xl:text-3xl font-bold tracking-tight text-foreground">
+                    {/* Desktop Title */}
+                    <div className="hidden md:block">
+                        <h1 className="text-2xl xl:text-3xl font-bold tracking-tight">
                             {novel.title}
                         </h1>
                         <p className="text-muted-foreground mt-1">
-                            by{" "}
-                            <Link
-                                href={`/author/${novel.author.id}`}
-                                className="text-primary hover:underline"
-                            >
-                                {/* {novel.author.username || 'Unique Novels'} */}
-                                Unique Novels
-                            </Link>
+                            by <span className="text-primary">Unique Novels</span>
                         </p>
                     </div>
 
@@ -73,21 +86,19 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                             <BookOpen className="h-4 w-4" />
-                            <span>{novel.chapters.length} Chapters</span>
+                            {novel.chapters.length} Chapters
                         </div>
                         <div className="flex items-center gap-1">
                             <Eye className="h-4 w-4" />
-                            <span>{novel.views?.toLocaleString() ?? 0} Views</span>
+                            {novel.views?.toLocaleString() ?? 0} Views
                         </div>
                         <div className="flex items-center gap-1">
                             <CalendarDays className="h-4 w-4" />
-                            <span>
-                                {new Date(novel.createdAt).toLocaleDateString(undefined, {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                })}
-                            </span>
+                            {new Date(novel.createdAt).toLocaleDateString(undefined, {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                            })}
                         </div>
                     </div>
 
@@ -108,23 +119,24 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                         <ExpandableSummary summary={novel.description || "No description available."} />
                     </p>
 
-                    {/* Start Reading Button */}
+                    {/* Actions */}
                     <div className="flex items-center gap-2">
                         {novel.chapters.length > 0 && (
-                            <Button asChild size="lg" className="">
+                            <Button asChild size="lg">
                                 <Link href={`/novel/${novel.slug}/chapter/${novel.chapters[0].slug}`}>
                                     Start Reading
                                 </Link>
                             </Button>
                         )}
                         <BookMark
-                            novelId={novel.id as string}
-                            novelSlug={novel.slug as string}
-                            isBookMarked={novel.isBookmarked as boolean}
+                            novelId={novel.id}
+                            novelSlug={novel.slug}
+                            isBookMarked={novel.isBookmarked}
                         />
                     </div>
                 </div>
             </div>
+
 
             {/* Tabs for Chapters and Reviews */}
             <section className="mt-12">

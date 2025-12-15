@@ -56,9 +56,9 @@ export default function HomePage({ recentNovels, trendingNovels, popularNovels }
                             <div className="space-y-2">
                                 <h2 className="text-xl md:text-3xl font-bold flex items-center">
                                     <Clock className="mr-3 h-6 w-6 text-blue-500" />
-                                    Recently Updated
+                                    Recently Added
                                 </h2>
-                                <p className="text-muted-foreground">Fresh chapters just released</p>
+                                <p className="text-muted-foreground">Fresh novels just released</p>
                             </div>
                             <Button className='text-sm md:text-base' variant="outline" asChild>
                                 <Link href="/browse?section=recent">

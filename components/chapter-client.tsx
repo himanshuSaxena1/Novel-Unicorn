@@ -174,7 +174,7 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
                 <ChapterComments chapterId={chapter.id} />
                 <div className="py-4">
                     <h2 className="text-base md:text-2xl font-bold mb-6">Trending Novels</h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
+                    <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
                         {trendingNovels.slice(0, 5).map((novel: any, index: number) => (
                             <div key={novel.id} className="relative">
                                 <Badge className="absolute -top-2 -left-2 z-10 bg-green-500 text-white">

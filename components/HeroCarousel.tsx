@@ -206,7 +206,7 @@ export default function HeroCarousel({ initialNovels }: HeroCarouselProps) {
             {slides.map((_, index) => (
               <button
                 key={index}
-                className={`w-7 h-1.5 rounded-full transition-colors ${index === selectedIndex ? "bg-white" : "bg-white/50"
+                className={`w-7 h-1 rounded-full transition-colors ${index === selectedIndex ? "bg-white" : "bg-white/50"
                   }`}
                 onClick={() => emblaApi?.scrollTo(index)}
                 aria-label={`Go to slide ${index + 1}`}

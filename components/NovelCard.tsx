@@ -114,13 +114,13 @@ export default function NovelCard({
 
           {/* Status Badge */}
           <Badge
-            className="absolute top-2 right-2 text-[9px] md:text-[10px]"
+            className="absolute top-2 right-0.5 md:right-2 text-[9px] md:text-[10px]"
             variant={status === 'COMPLETED' ? 'default' : 'secondary'}
           >
             {status}
           </Badge>
           {/* Language Badge */}
-          <Badge className="absolute top-2 left-2 text-[9px] md:text-[10px]" variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'default'}>
+          <Badge className="absolute top-2 left-0.5 md:left-2 text-[9px] md:text-[10px]" variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'default'}>
             {language}
           </Badge>
 
