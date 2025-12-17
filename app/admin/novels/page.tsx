@@ -1,20 +1,14 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { useSearchParams } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,36 +16,38 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Search, Plus, MoveHorizontal as MoreHorizontal, CreditCard as Edit, Trash2, Eye, Filter, BookOpen, Users, Star } from 'lucide-react'
-import { DeleteButton } from '@/components/DeleteButton'
-import Image from 'next/image'
-import api from '@/lib/axios'
+} from "@/components/ui/dropdown-menu"
+import { Search, Plus, MoreHorizontal, Edit, Eye, Filter, BookOpen, Users, Star } from "lucide-react"
+import { DeleteButton } from "@/components/DeleteButton"
+import Image from "next/image"
+import api from "@/lib/axios"
+import { DataTablePagination } from "@/components/pagination"
 
 export default function AdminNovelsPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState('ALL')
-  const [page, setPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("ALL")
+  const searchParams = useSearchParams()
+  const page = Number.parseInt(searchParams.get("page") || "1")
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-novels', page, searchQuery, statusFilter],
+    queryKey: ["admin-novels", page, searchQuery, statusFilter],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '20'
+        limit: "20",
       })
 
-      if (searchQuery) params.set('search', searchQuery)
-      if (statusFilter !== 'ALL') params.set('status', statusFilter)
+      if (searchQuery) params.set("search", searchQuery)
+      if (statusFilter !== "ALL") params.set("status", statusFilter)
 
       const response = await api.get(`/admin/novels?${params}`)
-      if (response.status !== 200) throw new Error('Failed to fetch novels')
+      if (response.status !== 200) throw new Error("Failed to fetch novels")
       return response.data
-    }
+    },
   })
 
   return (
-    <div className="space-y-8 max-w-7xl">
+    <div className="space-y-4 md:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -85,7 +81,7 @@ export default function AdminNovelsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {data?.novels?.filter((n: any) => n.status === 'ONGOING').length || 0}
+              {data?.novels?.filter((n: any) => n.status === "ONGOING").length || 0}
             </div>
           </CardContent>
         </Card>
@@ -97,7 +93,7 @@ export default function AdminNovelsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {data?.novels?.filter((n: any) => n.status === 'COMPLETED').length || 0}
+              {data?.novels?.filter((n: any) => n.status === "COMPLETED").length || 0}
             </div>
           </CardContent>
         </Card>
@@ -109,7 +105,7 @@ export default function AdminNovelsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {data?.novels?.reduce((sum: number, novel: any) => sum + (novel.views || 0), 0).toLocaleString() || '0'}
+              {data?.novels?.reduce((sum: number, novel: any) => sum + (novel.views || 0), 0).toLocaleString() || "0"}
             </div>
           </CardContent>
         </Card>
@@ -135,21 +131,11 @@ export default function AdminNovelsPage() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setStatusFilter('ALL')}>
-              All Status
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('ONGOING')}>
-              Ongoing
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('COMPLETED')}>
-              Completed
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('HIATUS')}>
-              Hiatus
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('DROPPED')}>
-              Dropped
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("ALL")}>All Status</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("ONGOING")}>Ongoing</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("COMPLETED")}>Completed</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("HIATUS")}>Hiatus</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("DROPPED")}>Dropped</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -179,12 +165,7 @@ export default function AdminNovelsPage() {
                 {data?.novels?.map((novel: any) => (
                   <TableRow key={novel.id}>
                     <TableCell>
-                      <Image
-                        src={`${novel.cover}`}
-                        height={60}
-                        width={45}
-                        alt={novel.title}
-                      />
+                      <Image src={`${novel.cover}`} height={60} width={45} alt={novel.title} />
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1">
@@ -205,16 +186,14 @@ export default function AdminNovelsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={novel.status === 'COMPLETED' ? 'default' : 'secondary'}>
-                        {novel.status}
-                      </Badge>
+                      <Badge variant={novel.status === "COMPLETED" ? "default" : "secondary"}>{novel.status}</Badge>
                     </TableCell>
                     <TableCell>{novel._count?.chapters || 0}</TableCell>
                     <TableCell>{(novel.views || 0).toLocaleString()}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span>{novel.rating?.toFixed(1) || '0.0'}</span>
+                        <span>{novel.rating?.toFixed(1) || "0.0"}</span>
                       </div>
                     </TableCell>
                     <TableCell>{(novel._count?.bookmarks || 0).toLocaleString()}</TableCell>
@@ -258,6 +237,9 @@ export default function AdminNovelsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      {data && <DataTablePagination currentPage={data.currentPage} totalPages={data.pages} totalItems={data.total} />}
     </div>
   )
 }

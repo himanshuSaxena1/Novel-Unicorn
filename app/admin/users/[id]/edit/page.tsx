@@ -43,7 +43,7 @@ const EditUserPage = () => {
   const { data: user, isLoading, error } = useQuery<User>({
     queryKey: ["user", id],
     queryFn: async () => {
-      const response = await api.get(`/user/${id}`)
+      const response = await api.get(`/admin/users/${id}`)
       if (response.status !== 200) throw new Error("Failed to fetch user")
       return response.data
     },
@@ -62,7 +62,7 @@ const EditUserPage = () => {
   // Mutation for updating user
   const mutation = useMutation({
     mutationFn: async (updatedData: Partial<User>) => {
-      const response = await api.patch(`/user/${id}`, updatedData); // Remove manual JSON/stringify
+      const response = await api.patch(`/admin/users/${id}`, updatedData); // Remove manual JSON/stringify
       return response.data;
     },
     onSuccess: (data) => {

@@ -58,7 +58,7 @@ export default function AdminTransactionsPage() {
     }
 
     return (
-        <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>

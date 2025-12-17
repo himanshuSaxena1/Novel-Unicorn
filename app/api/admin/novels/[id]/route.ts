@@ -37,13 +37,23 @@ export async function GET(
 
     const chapters = await prisma.chapter.findMany({
       where: { novelId: novel.id },
-      include: {
+      select: {
         novel: {
           select: {
             title: true,
             slug: true,
           },
         },
+        order: true,
+        id: true,
+        title: true,
+        chapterPrice: true,
+        isPublished: true,
+        wordCount: true,
+        createdAt: true,
+        views: true,
+        isLocked: true,
+        priceCoins: true,
       },
     });
 

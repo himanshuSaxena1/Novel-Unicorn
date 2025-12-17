@@ -1,19 +1,13 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { useSearchParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,47 +15,49 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Search, MoveHorizontal as MoreHorizontal, CreditCard as Edit, Ban, Crown, Users, UserCheck, UserX, Shield, Coins } from 'lucide-react'
-import Link from 'next/link'
+} from "@/components/ui/dropdown-menu"
+import { Search, MoreHorizontal, Edit, Ban, Crown, Users, UserCheck, Shield, Coins } from "lucide-react"
+import Link from "next/link"
+import { DataTablePagination } from "@/components/pagination"
 
 const ROLE_COLORS = {
-  USER: 'bg-blue-500',
-  AUTHOR: 'bg-green-500',
-  ADMIN: 'bg-red-500'
+  USER: "bg-blue-500",
+  AUTHOR: "bg-green-500",
+  ADMIN: "bg-red-500",
 }
 
 const SUBSCRIPTION_COLORS = {
-  FREE: 'bg-gray-500',
-  SMALL: 'bg-blue-500',
-  MEDIUM: 'bg-yellow-500',
-  PREMIUM: 'bg-purple-500'
+  FREE: "bg-gray-500",
+  SMALL: "bg-blue-500",
+  MEDIUM: "bg-yellow-500",
+  PREMIUM: "bg-purple-500",
 }
 
 export default function AdminUsersPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [roleFilter, setRoleFilter] = useState('ALL')
-  const [page, setPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [roleFilter, setRoleFilter] = useState("ALL")
+  const searchParams = useSearchParams()
+  const page = Number.parseInt(searchParams.get("page") || "1")
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-users', page, searchQuery, roleFilter],
+    queryKey: ["admin-users", page, searchQuery, roleFilter],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '20'
+        limit: "35",
       })
 
-      if (searchQuery) params.set('search', searchQuery)
-      if (roleFilter !== 'ALL') params.set('role', roleFilter)
+      if (searchQuery) params.set("search", searchQuery)
+      if (roleFilter !== "ALL") params.set("role", roleFilter)
 
       const response = await fetch(`/api/admin/users?${params}`)
-      if (!response.ok) throw new Error('Failed to fetch users')
+      if (!response.ok) throw new Error("Failed to fetch users")
       return response.json()
-    }
+    },
   })
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 md:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">Users Management</h1>
@@ -86,9 +82,7 @@ export default function AdminUsersPage() {
             <UserCheck className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {data?.users?.filter((u: any) => u.emailVerified).length || 0}
-            </div>
+            <div className="text-2xl font-bold">{data?.users?.filter((u: any) => u.emailVerified).length || 0}</div>
           </CardContent>
         </Card>
 
@@ -110,9 +104,7 @@ export default function AdminUsersPage() {
             <Shield className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {data?.users?.filter((u: any) => u.role === 'AUTHOR').length || 0}
-            </div>
+            <div className="text-2xl font-bold">{data?.users?.filter((u: any) => u.role === "AUTHOR").length || 0}</div>
           </CardContent>
         </Card>
       </div>
@@ -131,23 +123,13 @@ export default function AdminUsersPage() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              Role: {roleFilter}
-            </Button>
+            <Button variant="outline">Role: {roleFilter}</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setRoleFilter('ALL')}>
-              All Roles
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setRoleFilter('USER')}>
-              Users
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setRoleFilter('AUTHOR')}>
-              Authors
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setRoleFilter('ADMIN')}>
-              Admins
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setRoleFilter("ALL")}>All Roles</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setRoleFilter("USER")}>Users</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setRoleFilter("AUTHOR")}>Authors</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setRoleFilter("ADMIN")}>Admins</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -191,12 +173,12 @@ export default function AdminUsersPage() {
                     <TableCell>
                       <div className="flex items-center gap-1">
                         {user.coinBalance}
-                        <Coins className='text-yellow-500'/>
+                        <Coins className="text-yellow-500" />
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={user.emailVerified ? 'default' : 'secondary'}>
-                        {user.emailVerified ? 'Active' : 'Pending'}
+                      <Badge variant={user.emailVerified ? "default" : "secondary"}>
+                        {user.emailVerified ? "Active" : "Pending"}
                       </Badge>
                     </TableCell>
                     <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
@@ -211,7 +193,7 @@ export default function AdminUsersPage() {
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem>
-                            <Link className='flex items-center gap-1' href={`/admin/users/${user.id}/edit`}>
+                            <Link className="flex items-center gap-1" href={`/admin/users/${user.id}/edit`}>
                               <Edit className="mr-2 h-4 w-4" />
                               Edit User
                             </Link>
@@ -234,6 +216,9 @@ export default function AdminUsersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      {data && <DataTablePagination currentPage={data.currentPage} totalPages={data.pages} totalItems={data.total} />}
     </div>
   )
 }

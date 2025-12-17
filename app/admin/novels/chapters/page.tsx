@@ -167,8 +167,8 @@ export default function CreateChapterPage() {
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant={chapter.isLocked ? 'default' : 'secondary'}>
-                                                    {chapter.isLocked ? 'Published' : 'Draft'}
+                                                <Badge variant={chapter.isPublished ? 'default' : 'secondary'}>
+                                                    {chapter.isPublished ? 'Published' : 'Draft'}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>{(chapter.views || 0).toLocaleString()}</TableCell>
