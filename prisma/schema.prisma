@@ -83,6 +83,7 @@ model User {
   ChapterPurchase ChapterPurchase[]
   ExternalPayment ExternalPayment[]
   chapterComments ChapterComment[]
+  issueReports    IssueReport[]
 
   @@map("users")
 }
@@ -176,6 +177,7 @@ model Novel {
   chapters  Chapter[]
   bookmarks Bookmark[]
   reviews   Review[]
+  issueReports IssueReport[]
 
   @@map("novels")
 }
@@ -219,6 +221,7 @@ model Chapter {
   readingProgress ReadingProgress[]
   ChapterPurchase ChapterPurchase[]
   chapterComments ChapterComment[]
+  issueReports    IssueReport[]
 
   
   @@unique([novelId, slug])
@@ -379,6 +382,49 @@ model ExternalPayment {
   createdAt     DateTime @default(now())
 
   @@map("external_payments")
+}
+
+model IssueReport {
+  id          String      @id @default(cuid())
+  type        IssueType
+  description String      @db.Text
+  status      IssueStatus @default(PENDING)
+  
+  // Location details
+  chapterId String?
+  chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  
+  novelId String?
+  novel   Novel?  @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  
+  // Reporter
+  reporterId String
+  reporter   User   @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  
+  // Admin notes
+  adminNotes String? @db.Text
+  resolvedAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("issue_reports")
+}
+
+enum IssueStatus {
+  PENDING
+  IN_REVIEW
+  RESOLVED
+  REJECTED
+}
+
+enum IssueType {
+  TRANSLATION_ERROR
+  FORMATTING_ERROR
+  MISSING_CONTENT
+  INAPPROPRIATE_CONTENT
+  TECHNICAL_ISSUE
+  OTHER
 }
 
 enum UserRole {

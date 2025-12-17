@@ -1,76 +1,76 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { RichTextRenderer } from "@/components/MarkdownReader";
-import { ReaderProvider } from "@/components/reader/reader-provider";
-import { ReadingControls } from "@/components/reader/reading-controls";
-import { ReaderContainer } from "@/components/reader/reader-container";
-import api from "@/lib/axios";
-import { useState } from "react";
-import toast from "react-hot-toast";
-import { useSession } from "next-auth/react";
-import ChapterComments from "./ChapterComments";
-import { Badge } from "./ui/badge";
-import NovelCard from "./NovelCard";
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { RichTextRenderer } from "@/components/MarkdownReader"
+import { ReaderProvider } from "@/components/reader/reader-provider"
+import { ReadingControls } from "@/components/reader/reading-controls"
+import { ReaderContainer } from "@/components/reader/reader-container"
+import api from "@/lib/axios"
+import { useState } from "react"
+import toast from "react-hot-toast"
+import { useSession } from "next-auth/react"
+import ChapterComments from "./ChapterComments"
+import { Badge } from "./ui/badge"
+import NovelCard from "./NovelCard"
+import { ReportIssueDialog } from "./report-issue-modal"
 
 export function ChapterClient({ data, trendingNovels }: { data: any; trendingNovels: any }) {
-    const router = useRouter();
-    const { novel, chapter, prev, next } = data;
-    const [locked, setLocked] = useState(chapter.isLocked);
-    const [unlocking, setUnlocking] = useState(false);
+    const router = useRouter()
+    const { novel, chapter, prev, next } = data
+    const [locked, setLocked] = useState(chapter.isLocked)
+    const [unlocking, setUnlocking] = useState(false)
     const { data: session, update } = useSession()
 
     const handleUnlock = async () => {
         if (!session) {
-            toast.error("Please log in to unlock this chapter.");
-            router.push("/auth/signin?callbackUrl=" + encodeURIComponent(window.location.pathname));
-            return;
+            toast.error("Please log in to unlock this chapter.")
+            router.push("/auth/signin?callbackUrl=" + encodeURIComponent(window.location.pathname))
+            return
         }
 
         try {
-            setUnlocking(true);
-            const res = await api.post(`/chapters/paypal/${chapter.id}/purchase`);
+            setUnlocking(true)
+            const res = await api.post(`/chapters/paypal/${chapter.id}/purchase`)
             if (res.data.success) {
-                toast.success("Chapter unlocked! Enjoy reading.");
+                toast.success("Chapter unlocked! Enjoy reading.")
                 window.location.reload()
                 if (res.data.unlocked) {
-                    setLocked(false);
-                    chapter.content = res.data.unlocked.content;
-                    await update();
-                    return;
+                    setLocked(false)
+                    chapter.content = res.data.unlocked.content
+                    await update()
+                    return
                 }
-                const chapterRes = await api.get(`/novels/${novel.slug}/chapters/${chapter.slug}`);
+                const chapterRes = await api.get(`/novels/${novel.slug}/chapters/${chapter.slug}`)
                 if (chapterRes.data.chapter && !chapterRes.data.chapter.isLocked) {
-                    setLocked(false);
-                    chapter.content = chapterRes.data.chapter.content;
+                    setLocked(false)
+                    chapter.content = chapterRes.data.chapter.content
                 } else {
-                    toast.error("Failed to unlock chapter. Please refresh or contact support.");
+                    toast.error("Failed to unlock chapter. Please refresh or contact support.")
                 }
             }
         } catch (err: any) {
             if (err.response?.data?.error === "Already purchased") {
-                toast.success("You have already purchased this chapter.");
-                const chapterRes = await api.get(`/novels/${novel.slug}/chapters/${chapter.slug}`);
+                toast.success("You have already purchased this chapter.")
+                const chapterRes = await api.get(`/novels/${novel.slug}/chapters/${chapter.slug}`)
                 if (chapterRes.data.chapter && !chapterRes.data.chapter.isLocked) {
-                    setLocked(false);
-                    chapter.content = chapterRes.data.chapter.content;
+                    setLocked(false)
+                    chapter.content = chapterRes.data.chapter.content
                 } else {
-                    toast.error("Chapter is still locked. Please contact support.");
+                    toast.error("Chapter is still locked. Please contact support.")
                 }
             } else if (err.response?.data?.error === "Insufficient coins") {
-                toast.error("You don’t have enough coins. Please recharge first.");
-                router.push("");
+                toast.error("You don't have enough coins. Please recharge first.")
+                router.push("")
             } else {
-                console.error("Unlock failed", err);
-                toast.error("Failed to unlock chapter. Please try again.");
+                console.error("Unlock failed", err)
+                toast.error("Failed to unlock chapter. Please try again.")
             }
         } finally {
-            setUnlocking(false);
+            setUnlocking(false)
         }
-    };
-
+    }
 
     return (
         <ReaderProvider>
@@ -132,25 +132,23 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
                                         className="text-primary font-medium hover:underline"
                                     >
                                         Log in
-                                    </button>
-                                    {" "}to unlock and support creators.
+                                    </button>{" "}
+                                    to unlock and support creators.
                                 </p>
                             )}
 
                             <p className="mt-3 text-xs text-muted-foreground">
-                                Don’t have enough coins?{" "}
-                                <button
-                                    onClick={() => router.push("/coins")}
-                                    className="text-primary font-medium hover:underline"
-                                >
+                                Don&apos;t have enough coins?{" "}
+                                <button onClick={() => router.push("/coins")} className="text-primary font-medium hover:underline">
                                     Get more here
-                                </button>.
+                                </button>
+                                .
                             </p>
                         </div>
                     )}
                 </ReaderContainer>
 
-                <div className="flex items-center justify-between pb-5 md:hidden">
+                <div className="flex items-center justify-between pb-5 ">
                     {prev ? (
                         <Button asChild variant="outline" size="sm">
                             <Link href={`/novel/${novel.slug}/chapter/${prev.slug}`}>Previous</Link>
@@ -160,6 +158,7 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
                             Previous
                         </Button>
                     )}
+                    <ReportIssueDialog chapterId={chapter.id} novelId={novel.id} type="chapter" />
                     {next ? (
                         <Button asChild size="sm">
                             <Link href={`/novel/${novel.slug}/chapter/${next.slug}`}>Next</Link>
@@ -174,12 +173,10 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
                 <ChapterComments chapterId={chapter.id} />
                 <div className="py-4">
                     <h2 className="text-base md:text-2xl font-bold mb-6">Trending Novels</h2>
-                    <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
-                        {trendingNovels.slice(0, 5).map((novel: any, index: number) => (
+                    <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-4 md:gap-6">
+                        {trendingNovels.slice(0, 6).map((novel: any, index: number) => (
                             <div key={novel.id} className="relative">
-                                <Badge className="absolute -top-2 -left-2 z-10 bg-green-500 text-white">
-                                    #{index + 1}
-                                </Badge>
+                                <Badge className="absolute -top-2 -left-2 z-10 bg-green-500 text-white">#{index + 1}</Badge>
                                 <NovelCard {...novel} showDetails={false} />
                             </div>
                         ))}
@@ -187,5 +184,5 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
                 </div>
             </main>
         </ReaderProvider>
-    );
+    )
 }

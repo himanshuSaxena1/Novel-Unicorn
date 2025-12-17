@@ -22,6 +22,7 @@ import {
   Bell,
   Search,
   ChevronRight,
+  Flag,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Suspense } from "react"
@@ -31,6 +32,7 @@ const navigation = [
   { name: "Novels", href: "/admin/novels", icon: BookOpen },
   { name: "Chapters", href: "/admin/chapters", icon: FileText },
   { name: "Comments", href: "/admin/comments", icon: MessageSquareMore },
+  { name: "Issues", href: "/admin/issues", icon: Flag },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Subscriptions", href: "/admin/coins", icon: Crown },
   { name: "Payments", href: "/admin/payments", icon: CreditCard },
