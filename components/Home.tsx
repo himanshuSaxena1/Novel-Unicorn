@@ -32,7 +32,7 @@ export default function HomePage({ recentNovels, trendingNovels, popularNovels }
                         </div>
 
                         <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 z-50">
-                            <div className="flex gap-3 sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 py-2">
+                            <div className="flex gap-3 sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 py-2">
                                 {trendingNovels.slice(0, 6).map((novel: any, index: number) => (
                                     <div key={novel.id} className="relative min-w-[140px] sm:min-w-0">
                                         <Badge className="absolute -top-2 -left-3 z-10 bg-green-500 text-white border border-white">
@@ -69,7 +69,7 @@ export default function HomePage({ recentNovels, trendingNovels, popularNovels }
                         </div>
 
                         <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-                            <div className="flex gap-3 sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 py-2">
+                            <div className="flex gap-3 sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 py-2">
                                 {recentNovels.novels?.slice(0, 6).map((novel: any) => (
                                     <div key={novel.id} className="min-w-[140px] sm:min-w-0">
                                         <NovelCard {...novel} />

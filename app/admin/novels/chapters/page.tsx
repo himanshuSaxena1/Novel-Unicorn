@@ -108,7 +108,7 @@ export default function CreateChapterPage() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-4 md:space-y-8 max-w-7xl mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center justify-between w-full">
@@ -163,7 +163,7 @@ export default function CreateChapterPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center space-x-2">
-                                                    {chapter.priceCoins > 0 ? <span className='flex items-center gap-1'><CoinsIcon className="w-4 h-4 text-yellow-600" />{chapter.priceCoins}</span> : "FREE"}
+                                                    {chapter.priceCoins > 0 && chapter.isLocked ? <span className='flex items-center gap-1'><CoinsIcon className="w-4 h-4 text-yellow-600" />{chapter.priceCoins}</span> : "FREE"}
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -188,7 +188,7 @@ export default function CreateChapterPage() {
                                                                 variant="link"
                                                                 size="sm"
                                                                 className="gap-1"
-                                                                onClick={() => handleCopyLink(res?.novel.slug, chapter.slug,)}
+                                                                onClick={() => handleCopyLink(res?.novel.slug, chapter?.slug,)}
                                                             >
                                                                 <Copy className="mr-2 h-4 w-4" />
                                                                 Copy Link

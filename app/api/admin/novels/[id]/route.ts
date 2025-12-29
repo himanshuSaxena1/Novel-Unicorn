@@ -54,6 +54,7 @@ export async function GET(
         views: true,
         isLocked: true,
         priceCoins: true,
+        slug: true,
       },
     });
 

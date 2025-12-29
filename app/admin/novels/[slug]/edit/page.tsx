@@ -24,14 +24,16 @@ import toast from 'react-hot-toast'
 const GENRE_OPTIONS = [
   'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller', 'Horror',
   'Adventure', 'Drama', 'Comedy', 'Action', 'Cultivation', 'System',
-  'Reincarnation', 'Magic', 'School', 'Martial Arts', 'Gaming', 'VR'
+  'Reincarnation', 'Magic', 'School', 'Martial Arts', 'Gaming', 'VR', 'Cheat', 'Historical', 'Supernatural', 'Slice of Life', 'Mecha', 'Sports', 'Music'
+
 ]
 
 const TAG_OPTIONS = [
-  'Strong Protagonist', 'Weak to Strong', 'Multiple POV', 'First Person',
-  'Male Lead', 'Female Lead', 'Overpowered', 'Underdog', 'Revenge',
-  'Kingdom Building', 'Academy', 'Transported', 'Modern Day', 'Medieval',
-  'Futuristic', 'Dragons', 'Demons', 'Gods', 'Magic Academy', 'Tournaments'
+  "Alternate World", "Ancient Times", "Clever Protagonist", "Curses", "", "Strong Protagonist", "Weak to Strong", "Multiple POV", "First Person",
+  "Male Lead", "Female Lead", "Overpowered", "Underdog", "Revenge", "Dungeons", "Survival", " Post-Apocalyptic", " Space", " Time Travel", " Survival Game",
+  " Virtual Reality", " VRMMO", " Cultivation",
+  "Kingdom Building", "Academy", "Transported", "Modern Day", "Medieval",
+  "Futuristic", "Dragons", "Demons", "Gods", "Magic Academy", "Tournaments"
 ]
 
 export default function EditNovelPage() {
@@ -134,7 +136,7 @@ export default function EditNovelPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">

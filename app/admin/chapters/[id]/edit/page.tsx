@@ -114,19 +114,29 @@ export default function UpdateChapterPage({ params }: { params: { id: string } }
     })
 
     const handleInputChange = (field: string, value: any) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: value,
-        }))
-
-        // Auto-generate slug from title
-        if (field === 'title') {
-            setFormData((prev) => ({
+        setFormData((prev) => {
+            const updated = {
                 ...prev,
-                slug: value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-            }))
-        }
+                [field]: value,
+            }
+
+            // Auto-generate slug from title
+            if (field === 'title') {
+                updated.slug = value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)/g, '')
+            }
+
+            // If chapter is unlocked, reset price to 0
+            if (field === 'isLocked' && value === false) {
+                updated.priceCoins = 0
+            }
+
+            return updated
+        })
     }
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -236,6 +246,7 @@ export default function UpdateChapterPage({ params }: { params: { id: string } }
                                     type="number"
                                     min={0}
                                     value={formData.priceCoins}
+                                    disabled={!formData.isLocked}
                                     onChange={(e) => handleInputChange('priceCoins', parseInt(e.target.value, 10) || 0)}
                                     placeholder="Price in coins (0 for free)"
                                 />
