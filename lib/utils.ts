@@ -36,7 +36,7 @@ export const PACKAGES: Package[] = [
     id: "silver",
     name: "Silver",
     price: 29.99,
-    coins: 3000,
+    coins: 3300,
     subtitle: "Perfect for Regulars",
     description:
       "Ideal for frequent readers to enjoy a variety of premium stories and features.",
@@ -45,7 +45,7 @@ export const PACKAGES: Package[] = [
     id: "gold",
     name: "Gold",
     price: 49.99,
-    coins: 5100,
+    coins: 5500,
     subtitle: "Ideal for Enthusiasts",
     description:
       "Great for avid readers who want extended access to exclusive content and bonuses.",
@@ -54,7 +54,7 @@ export const PACKAGES: Package[] = [
     id: "platinum",
     name: "Platinum",
     price: 99.99,
-    coins: 11000,
+    coins: 12000,
     subtitle: "Ultimate Experience",
     description:
       "The best choice for power users with unlimited access to all premium content and perks.",

@@ -138,8 +138,8 @@ export default function CoinsPage() {
 
                 <CardContent className="space-y-3">
                   <div className="text-center">
-                    <p className="text-3xl font-semibold text-foreground md:text-4xl">${pkg.price.toFixed(2)}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{pkg.coins.toLocaleString()} coins</p>
+                    <p className="text-base text-muted-foreground font-semibold  md:text-xl">${pkg.price.toFixed(2)}</p>
+                    <p className="mt-1 text-2xl text-foreground">{pkg.coins.toLocaleString()} coins</p>
                   </div>
                   {pkg.description ? (
                     <p className="line-clamp-2 text-center text-sm text-muted-foreground">{pkg.description}</p>
