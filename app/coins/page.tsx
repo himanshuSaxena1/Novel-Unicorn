@@ -99,61 +99,102 @@ export default function CoinsPage() {
   }
 
   return (
-    <main className="min-h-[70vh] bg-background">
+    <main className="min-h-[70vh] bg-gradient-to-b from-background to-muted/40">
       <section className="mx-auto w-full max-w-6xl px-4 py-12 md:py-16">
-        <header className="mb-10 text-center md:mb-14">
-          <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-            <CoinsIcon className="mr-1.5 h-4 w-4" aria-hidden="true" />
+        <header className="mb-12 text-center">
+          <div className="mx-auto mb-4 inline-flex items-center rounded-full bg-yellow-100 px-4 py-1.5 text-xs font-semibold text-yellow-700">
+            <CoinsIcon className="mr-1.5 h-4 w-4" />
             Buy Coins
           </div>
-          <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
-            Unlock premium content with flexible coin packs
+
+          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+            Unlock premium chapters instantly
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground md:mt-4 md:text-base">
-            Choose a package that fits your reading habit. Pay securely with PayPal.
+
+          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+            Pick a coin bundle that fits your reading style. Secure checkout with PayPal.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {PACKAGES.map((pkg) => {
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {PACKAGES.map((pkg, index) => {
             const paypalContainerId = `paypal-buttons-${pkg.id}`
             const isThisSelected = selected?.id === pkg.id
+            const isPopular = index === 1 
+            const mostBeneficial = index === 2
+
             return (
               <Card
                 key={pkg.id}
                 className={cn(
-                  "flex flex-col justify-between border-border bg-card text-card-foreground transition-shadow duration-200",
-                  isThisSelected ? "ring-2 ring-primary" : "hover:shadow-md",
+                  "relative flex flex-col justify-between overflow-hidden transition-all duration-300 p-0",
+                  isThisSelected
+                    ? "ring-2 ring-yellow-500 shadow-lg scale-[1.02]"
+                    : "hover:shadow-xl hover:-translate-y-1"
                 )}
               >
-                <CardHeader className="space-y-1">
-                  <div className="flex items-center justify-center">
-                    <CoinsIcon className="h-10 w-10 text-yellow-600" aria-hidden="true" />
-                  </div>
-                  <CardTitle className="text-center text-lg md:text-xl">{pkg.name}</CardTitle>
-                  {pkg.subtitle ? (
-                    <p className="text-center text-xs font-medium text-muted-foreground">{pkg.subtitle}</p>
-                  ) : null}
+                {mostBeneficial && (
+                  <span className="absolute right-3 top-3 rounded-full text-black bg-yellow-500 px-2 py-0.5 text-[12px] font-semibold ">
+                    Best Value
+                  </span>
+                )}
+                {isPopular && (
+                  <span className="absolute right-3 top-3 rounded-full text-black bg-yellow-500 px-2 py-0.5 text-[12px] font-semibold ">
+                    Most Popular
+                  </span>
+                )}
+
+                <CardHeader className="space-y-2 pt-6 p-3">
+                  <CoinsIcon className="mx-auto h-12 w-12 text-yellow-500" />
+
+                  <CardTitle className="text-center text-lg font-semibold">
+                    {pkg.name}
+                  </CardTitle>
+
+                  {pkg.subtitle && (
+                    <p className="text-center text-xs font-medium text-muted-foreground">
+                      {pkg.subtitle}
+                    </p>
+                  )}
                 </CardHeader>
 
-                <CardContent className="space-y-3">
-                  <div className="text-center">
-                    <p className="text-base text-muted-foreground font-semibold  md:text-xl">${pkg.price.toFixed(2)}</p>
-                    <p className="mt-1 text-2xl text-foreground">{pkg.coins.toLocaleString()} coins</p>
+                <CardContent className="space-y-4 p-2">
+                  <div className="text-center flex items-end justify-center gap-3">
+                    <div>
+                      <p className="text-lg font-bold">${pkg.price.toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">Pay only</p>
+                    </div>
+
+                    <div>
+                      <p className="mt-2 text-3xl font-extrabold text-yellow-500">
+                        {pkg.coins.toLocaleString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">coins</p>
+                    </div>
                   </div>
-                  {pkg.description ? (
-                    <p className="line-clamp-2 text-center text-sm text-muted-foreground">{pkg.description}</p>
-                  ) : null}
+
+                  {pkg.description && (
+                    <p className="text-center text-sm text-muted-foreground line-clamp-3">
+                      {pkg.description}
+                    </p>
+                  )}
                 </CardContent>
 
-                <CardFooter className="flex flex-col gap-3">
-                  <Button onClick={() => createOrder(pkg)} disabled={creatingOrder || !!orderId} className="w-full bg-yellow-600 text-white">
-                    {creatingOrder && isThisSelected ? "Processing..." : "Buy"}
+                <CardFooter className="flex flex-col gap-3 pb-6">
+                  <Button
+                    onClick={() => createOrder(pkg)}
+                    disabled={creatingOrder || !!orderId}
+                    className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-semibold"
+                  >
+                    {creatingOrder && isThisSelected ? "Processing..." : "Buy Now"}
                   </Button>
 
-                  {orderId && isThisSelected ? (
-                    <div id={paypalContainerId} className="mt-2 w-full flex justify-center" />
-                  ) : null}
+                  {orderId && isThisSelected && (
+                    <div
+                      id={paypalContainerId}
+                      className="mt-2 w-full flex justify-center"
+                    />
+                  )}
                 </CardFooter>
               </Card>
             )
@@ -161,5 +202,6 @@ export default function CoinsPage() {
         </div>
       </section>
     </main>
+
   )
 }

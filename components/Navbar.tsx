@@ -97,7 +97,7 @@ export default function Navbar() {
           {status === 'loading' ? (
             <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
           ) : session ? (
-            <DropdownMenu>
+            <DropdownMenu >
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="flex items-center space-x-2">
 
@@ -105,7 +105,7 @@ export default function Navbar() {
                   <span className="hidden sm:block">{session.user.username}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-screen mt-2 rounded-none md:w-56">
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="flex items-center">
                     <User className="mr-2 h-4 w-4" />
@@ -170,7 +170,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-background/95 backdrop-blur-sm animate-in slide-in-from-top">
+        <div className="md:hidden border-t bg-background/95 backdrop-blur-sm animate-in slide-in-from-top ">
           <div className="p-4 space-y-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

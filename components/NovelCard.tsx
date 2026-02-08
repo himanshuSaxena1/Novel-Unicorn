@@ -45,11 +45,11 @@ export default function NovelCard({
   
   if (viewMode === 'list') {
     return (
-      <Card className="group hover:shadow-lg transition-all duration-300">
-        <CardContent className="p-1.5 xl:p-6">
-          <div className="flex space-x-4">
+      <Card className="group hover:shadow-lg transition-all duration-300 border-transparent p-0  md:border-muted ">
+        <CardContent className="p-0 xl:p-6">
+          <div className="flex space-x-3">
             <div className="flex-shrink-0 h-max">
-              <div className="w-24 h-32 relative rounded-lg overflow-hidden">
+              <div className="w-24 h-32 relative rounded-md overflow-hidden">
                 <Image
                   src={cover || 'https://images.pexels.com/photos/694740/pexels-photo-694740.jpeg'}
                   alt={title}
@@ -61,7 +61,7 @@ export default function NovelCard({
 
             <div className="flex-1 space-y-3">
               <div>
-                <h3 className="font-semibold text-base leading-6 group-hover:text-primary transition-colors">
+                <h3 className="font-semibold text-base leading-6 group-hover:text-primary transition-colors line-clamp-2 md:line-clamp-3">
                   <Link href={`/novel/${slug}`}>
                     {title}
                   </Link>
@@ -85,10 +85,10 @@ export default function NovelCard({
                     <Eye className="h-3 w-3" />
                     <span className='text-xs sm:text-sm'>{views.toLocaleString()}</span>
                   </div>
-                  <Badge className='text-xs md:text-sm px-1 md:px-2' variant={status === 'COMPLETED' ? 'default' : 'secondary'}>
+                  <Badge className='text-[10px] md:text-sm px-1.5 py-0 md:px-2' variant={status === 'COMPLETED' ? 'default' : 'secondary'}>
                     {status}
                   </Badge>
-                  <Badge className='text-xs md:text-sm px-1 md:px-2' variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'outline'}>
+                  <Badge className='text-[10px] md:text-sm px-1.5 py-0 md:px-2' variant={language === 'KOREAN' ? 'default' : language === 'JAPANESE' ? 'secondary' : 'outline'}>
                     {language}
                   </Badge>
                 </div>
