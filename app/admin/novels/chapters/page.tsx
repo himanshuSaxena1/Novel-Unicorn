@@ -42,60 +42,7 @@ export default function CreateChapterPage() {
             return response.data || {}
         }
     })
-
-
-    const handleInputChange = (field: string, value: any) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value
-        }))
-
-        // Auto-generate slug from title
-        if (field === 'title') {
-            setFormData(prev => ({
-                ...prev,
-                slug: value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-            }))
-        }
-    }
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-
-        if (!formData.novelId) {
-            toast.error('Please select a novel')
-            return
-        }
-
-        setIsSubmitting(true)
-
-        try {
-            const response = await fetch('/api/chapters', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    wordCount: formData.content.split(/\s+/).length
-                })
-            })
-
-            if (!response.ok) {
-                const error = await response.json()
-                throw new Error(error.error || 'Failed to create chapter')
-            }
-
-            const chapter = await response.json()
-            toast.success('Chapter created successfully!')
-            router.push('/admin/chapters')
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to create chapter')
-        } finally {
-            setIsSubmitting(false)
-        }
-    }
-
+    
 
     const handleCopyLink = (novelSlug: string, chapterSlug: string) => {
         const link = `${process.env.NEXT_PUBLIC_APP_URL}/novel/${novelSlug}/chapter/${chapterSlug}`;

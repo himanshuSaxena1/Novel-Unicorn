@@ -249,7 +249,7 @@ export class NovelAPI {
       .filter((n) => n.chapters.length > 0)
       .sort(
         (a, b) =>
-          b.chapters[0].updatedAt.getTime() - a.chapters[0].updatedAt.getTime()
+          b.chapters[0].updatedAt.getTime() - a.chapters[0].updatedAt.getTime(),
       )
       .slice(0, limit)
       .map((novel) => {
@@ -371,10 +371,8 @@ export async function getChapter(slug: string, chapterSlug: string) {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
-    const novel = await prisma.novel.findFirst({
-      where: {
-        slug,
-      },
+    const novel = await prisma.novel.findUnique({
+      where: { slug },
     });
 
     if (!novel) {
@@ -392,23 +390,28 @@ export async function getChapter(slug: string, chapterSlug: string) {
       },
     });
 
-    const chapterData = await prisma.chapter.findFirst({
-      where: {
-        slug: chapterSlug,
-        novelId: novel.id,
-      },
-    });
+    const chapter = await prisma.$transaction(async (tx) => {
+      const chapter = await tx.chapter.findFirst({
+        where: {
+          slug: chapterSlug,
+          novelId: novel.id,
+        },
+        include: {
+          novel: { select: { id: true, title: true, slug: true } },
+          author: { select: { id: true, username: true } },
+        },
+      });
 
-    if (!chapterData) {
-      return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
-    }
+      if (!chapter) return null;
 
-    const chapter = await prisma.chapter.findUnique({
-      where: { id: chapterData.id },
-      include: {
-        novel: { select: { id: true, title: true, slug: true } },
-        author: { select: { id: true, username: true } },
-      },
+      await tx.chapter.update({
+        where: { id: chapter.id },
+        data: {
+          views: { increment: 1 },
+        },
+      });
+
+      return chapter;
     });
 
     if (!chapter) {
@@ -458,7 +461,7 @@ export async function getChapter(slug: string, chapterSlug: string) {
     console.error("[GET_CHAPTER_ERROR]", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
