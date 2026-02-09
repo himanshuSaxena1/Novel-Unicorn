@@ -22,11 +22,11 @@ export default async function NovelPage({ params }: { params: { slug: string } }
     return (
         <main className="mx-auto max-w-6xl px-4 py-8 md:py-12 min-h-[70vh]">
             {/* Header Section */}
-            <div className="grid gap-6 md:gap-8 md:grid-cols-[280px,1fr] items-start">
+            <div className="grid gap-4 md:gap-8 md:grid-cols-[280px,1fr] items-start">
                 {/* Cover + Title (Mobile Header) */}
                 <div className="flex gap-4 md:block">
                     {/* Cover */}
-                    <div className="relative aspect-[3/4] w-24 md:w-60 shrink-0 overflow-hidden rounded-lg border bg-muted shadow-sm">
+                    <div className="relative aspect-[3/4] w-28 md:w-60 shrink-0 overflow-hidden rounded-lg border bg-muted shadow-sm">
                         <Image
                             src={novel.cover || "/placeholder.svg?height=400&width=300"}
                             alt={`${novel.title} cover`}
@@ -58,12 +58,12 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                             <h1 className="text-lg mt-1 font-bold leading-tight">
                                 {novel.title}
                             </h1>
-                            <div className="flex items-center gap-3">
-                                <p className="md:hidden text-sm text-muted-foreground mt-1">
-                                    Language: <span className="text-primary">{novel.language}</span>
-                                </p>
+                            <div className="flex flex-col items-start gap-2">
                                 <p className="text-sm text-muted-foreground mt-1">
                                     by: <span className="text-primary">Unique Novels</span>
+                                </p>
+                                <p className="md:hidden text-sm text-muted-foreground mt-1">
+                                    Language: <span className="text-primary">{novel.language}</span>
                                 </p>
                             </div>
                         </div>
@@ -123,8 +123,14 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                     <div className="flex items-center gap-2">
                         {novel.chapters.length > 0 && (
                             <Button asChild size="lg">
-                                <Link href={`/novel/${novel.slug}/chapter/${novel.chapters[0].slug}`}>
-                                    Start Reading
+                                <Link
+                                    href={
+                                        novel.continueReading
+                                            ? `/novel/${novel.slug}/chapter/${novel.continueReading.slug}`
+                                            : `/novel/${novel.slug}/chapter/${novel.chapters[0].slug}`
+                                    }
+                                >
+                                    {novel.continueReading ? "Continue Reading" : "Start Reading"}
                                 </Link>
                             </Button>
                         )}

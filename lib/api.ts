@@ -236,7 +236,7 @@ export class NovelAPI {
             createdAt: true,
             updatedAt: true,
           },
-          orderBy: { updatedAt: "desc" }, // latest chapter first
+          orderBy: { createdAt: "desc" }, // latest chapter first
           take: 1,
         },
         reviews: {
@@ -379,17 +379,6 @@ export async function getChapter(slug: string, chapterSlug: string) {
       return NextResponse.json({ error: "Novel not found" }, { status: 404 });
     }
 
-    await prisma.novel.update({
-      where: {
-        id: novel.id,
-      },
-      data: {
-        views: {
-          increment: 1,
-        },
-      },
-    });
-
     const chapter = await prisma.$transaction(async (tx) => {
       const chapter = await tx.chapter.findFirst({
         where: {
@@ -410,6 +399,36 @@ export async function getChapter(slug: string, chapterSlug: string) {
           views: { increment: 1 },
         },
       });
+
+      await tx.novel.update({
+        where: {
+          id: novel.id,
+        },
+        data: {
+          views: {
+            increment: 1,
+          },
+        },
+      });
+
+      if (userId) {
+        await tx.readingProgress.upsert({
+          where: {
+            userId_chapterId: {
+              userId,
+              chapterId: chapter.id,
+            },
+          },
+          update: {
+            updatedAt: new Date(), 
+          },
+          create: {
+            userId,
+            chapterId: chapter.id,
+            progress: 0, 
+          },
+        });
+      }
 
       return chapter;
     });

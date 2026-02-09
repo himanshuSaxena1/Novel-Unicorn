@@ -87,7 +87,7 @@ export async function getNovelBySlug(slug: string, userId?: string) {
           where: { userId, novelId: novel.id },
           select: { chapterId: true },
         });
-        const purchasedChapterIds = new Set(purchases.map(p => p.chapterId));
+        const purchasedChapterIds = new Set(purchases.map((p) => p.chapterId));
         novel.chapters = novel.chapters.map((chapter: any) => ({
           ...chapter,
           isLocked: chapter.isLocked && !purchasedChapterIds.has(chapter.id),
@@ -129,16 +129,30 @@ export async function getNovelBySlug(slug: string, userId?: string) {
     });
     (novel as any).isBookmarked = !!bookmark;
 
-    // Check chapter purchases to update isLocked
     const purchases = await prisma.chapterPurchase.findMany({
       where: { userId, novelId: novel.id },
       select: { chapterId: true },
     });
-    const purchasedChapterIds = new Set(purchases.map(p => p.chapterId));
-    novel.chapters = novel.chapters.map(chapter => ({
+
+    const purchasedChapterIds = new Set(purchases.map((p) => p.chapterId));
+
+    novel.chapters = novel.chapters.map((chapter) => ({
       ...chapter,
       isLocked: chapter.isLocked && !purchasedChapterIds.has(chapter.id),
     }));
+
+    const lastProgress = await prisma.readingProgress.findFirst({
+      where: {
+        userId,
+        chapter: { novelId: novel.id },
+      },
+      orderBy: { updatedAt: "desc" },
+      include: {
+        chapter: { select: { slug: true, order: true } },
+      },
+    });
+
+    (novel as any).continueReading = lastProgress?.chapter || null;
   }
 
   try {
@@ -181,12 +195,12 @@ export async function getUserSubscription(userId: string) {
 
 export async function getChapterBySlugs(
   novelSlug: string,
-  chapterSlug: string
+  chapterSlug: string,
 ) {
   const novel = await getNovelBySlug(novelSlug);
   if (!novel) return { novel: undefined, chapter: undefined, index: -1 };
   const index = novel.chapters.findIndex(
-    (c: { slug: string }) => c.slug === chapterSlug
+    (c: { slug: string }) => c.slug === chapterSlug,
   );
   const chapter = index >= 0 ? novel.chapters[index] : undefined;
   return { novel, chapter, index };
