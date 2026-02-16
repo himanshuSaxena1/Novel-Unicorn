@@ -84,6 +84,7 @@ model User {
   ExternalPayment ExternalPayment[]
   chapterComments ChapterComment[]
   issueReports    IssueReport[]
+  notifications   Notification[]
 
   @@map("users")
 }
@@ -174,9 +175,9 @@ model Novel {
   updatedAt DateTime @updatedAt
 
   // Relations
-  chapters  Chapter[]
-  bookmarks Bookmark[]
-  reviews   Review[]
+  chapters     Chapter[]
+  bookmarks    Bookmark[]
+  reviews      Review[]
   issueReports IssueReport[]
 
   @@map("novels")
@@ -223,7 +224,6 @@ model Chapter {
   chapterComments ChapterComment[]
   issueReports    IssueReport[]
 
-  
   @@unique([novelId, slug])
   @@map("chapters")
 }
@@ -246,19 +246,18 @@ model Review {
   @@map("reviews")
 }
 
-
 model ChapterComment {
-  id        String   @id @default(cuid())
-  content   String   @db.Text
+  id        String  @id @default(cuid())
+  content   String  @db.Text
   chapterId String
-  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   // Replies (self-reference)
   parentId String?
-  parent   ChapterComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  parent   ChapterComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies  ChapterComment[] @relation("CommentReplies")
 
   // Timestamps
@@ -269,6 +268,7 @@ model ChapterComment {
   @@index([authorId])
   @@map("chapter_comments")
 }
+
 model Bookmark {
   id String @id @default(cuid())
 
@@ -338,14 +338,14 @@ model SiteSettings {
 
 // New: coin transaction log
 model CoinTransaction {
-  id        String   @id @default(cuid())
+  id        String          @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount    Int // positive = credit, negative = debit
   reference String? // optional external id or chapter id
   metadata  Json?
-  createdAt DateTime @default(now())
-  type       TransactionType
+  createdAt DateTime        @default(now())
+  type      TransactionType
 
   @@index([userId])
   @@map("coin_transactions")
@@ -371,8 +371,8 @@ model ChapterPurchase {
 // Optional: store external fiat payments
 model ExternalPayment {
   id            String   @id @default(cuid())
-  provider      String   // e.g. "PAYPAL"
-  providerOrder String?  // PayPal order id
+  provider      String // e.g. "PAYPAL"
+  providerOrder String? // PayPal order id
   userId        String?
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   amountUSD     Float
@@ -389,22 +389,22 @@ model IssueReport {
   type        IssueType
   description String      @db.Text
   status      IssueStatus @default(PENDING)
-  
+
   // Location details
   chapterId String?
   chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  
+
   novelId String?
   novel   Novel?  @relation(fields: [novelId], references: [id], onDelete: Cascade)
-  
+
   // Reporter
   reporterId String
   reporter   User   @relation(fields: [reporterId], references: [id], onDelete: Cascade)
-  
+
   // Admin notes
-  adminNotes String? @db.Text
+  adminNotes String?   @db.Text
   resolvedAt DateTime?
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -470,4 +470,33 @@ enum TransactionType {
   EARN
   SPEND
   REFUND
+}
+
+// notification
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String?
+  url       String?
+  imageUrl  String?
+  data      Json?
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  NEW_CHAPTER
+  PAYMENT_STATUS
+  SUBSCRIPTION_STATUS
+  CHAPTER_PURCHASE
+  COMMENT_REPLY
+  ISSUE_REPORT_UPDATE
+  SYSTEM
 }

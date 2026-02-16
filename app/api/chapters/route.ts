@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hasPermission } from "@/lib/permissions";
 import { invalidateNovelCache } from "@/lib/cache-utils";
+import { NotificationsAPI } from "@/lib/api";
 
 export async function GET(request: NextRequest) {
   try {
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching chapters:", error);
     return NextResponse.json(
       { error: "Failed to fetch chapters" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -92,12 +93,19 @@ export async function POST(request: NextRequest) {
 
     await invalidateNovelCache(chapter.novel.slug);
 
+    if (chapter.isPublished) {
+      NotificationsAPI.notifyNewChapter({
+        novelId: chapter.novelId,
+        chapterId: chapter.id,
+      });
+    }
+
     return NextResponse.json(chapter, { status: 201 });
   } catch (error) {
     console.error("Error creating chapter:", error);
     return NextResponse.json(
       { error: "Failed to create chapter" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

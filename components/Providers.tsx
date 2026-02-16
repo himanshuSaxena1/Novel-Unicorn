@@ -7,8 +7,10 @@ import { useState } from 'react'
 import NavbarWrapper from './NavbarWrapper'
 import { SafeToaster } from './SafeToaster'
 import FooterWrapper from './FooterWrapper'
+import { useEffect } from "react";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+    const [mounted, setMounted] = useState(false);
     const [queryClient] = useState(
         () =>
             new QueryClient({
@@ -20,6 +22,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 },
             })
     )
+    useEffect(() => setMounted(true), []);
+
+    if (!mounted) return null;
 
     return (
         <SessionProvider>

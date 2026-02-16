@@ -115,9 +115,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                     </div>
 
                     {/* Description */}
-                    <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                        <ExpandableSummary summary={novel.description || "No description available."} />
-                    </p>
+                    <ExpandableSummary summary={novel.description || "No description available."} />
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
@@ -182,6 +180,7 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+
                                                 {chapter.isLocked ? (
                                                     <span className="border border-yellow-600 px-2 py-2 rounded-md flex items-center gap-1">
                                                         {chapter.priceCoins}
@@ -189,11 +188,13 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                                     </span>
                                                 ) : (
                                                     <div className="border border-white/50 flex items-center gap-1 rounded px-1 py-1.5">
-                                                        {/* <Eye className="h-3 w-3" /> */}
-                                                        {/* {chapter.views?.toLocaleString() ?? 'Read'} */}
                                                         READ
                                                     </div>
                                                 )}
+                                                <div className="flex items-center gap-1">
+                                                    <Eye className="h-3 w-3" />
+                                                    {chapter.views?.toLocaleString() ?? 0}
+                                                </div>
                                             </div>
                                         </Link>
                                     ))}
