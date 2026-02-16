@@ -132,7 +132,7 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
                                             <Button
                                                 onClick={() =>
                                                     router.push(
-                                                        "/login?callbackUrl=" +
+                                                        "/auth/signin?callbackUrl=" +
                                                         encodeURIComponent(window.location.pathname)
                                                     )
                                                 }
@@ -143,7 +143,7 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
 
                                             <Button
                                                 variant="outline"
-                                                onClick={() => router.push("/register")}
+                                                onClick={() => router.push("/auth/signup?callbackUrl=" + encodeURIComponent(window.location.pathname))}
                                                 className="px-6"
                                             >
                                                 Sign Up
