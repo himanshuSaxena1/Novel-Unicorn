@@ -1,12 +1,13 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import redis, { CACHE_KEYS, CACHE_TTL } from "@/lib/redis";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { generateTeaser } from "./utils";
+
 export class NovelAPI {
   static async getFeaturedNovels(limit = 8) {
     const cacheKey = CACHE_KEYS.featuredNovels;
