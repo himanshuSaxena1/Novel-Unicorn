@@ -15,8 +15,10 @@ import ChapterComments from "./ChapterComments"
 import { Badge } from "./ui/badge"
 import NovelCard from "./NovelCard"
 import { ReportIssueDialog } from "./report-issue-modal"
+import { Coins } from "lucide-react"
 
 export function ChapterClient({ data, trendingNovels }: { data: any; trendingNovels: any }) {
+    console.log(data);
     const router = useRouter()
     const { novel, chapter, prev, next } = data
     const [locked, setLocked] = useState(chapter.isLocked)
@@ -62,7 +64,7 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
                 }
             } else if (err.response?.data?.error === "Insufficient coins") {
                 toast.error("You don't have enough coins. Please recharge first.")
-                router.push("")
+                router.push("/coins")
             } else {
                 console.error("Unlock failed", err)
                 toast.error("Failed to unlock chapter. Please try again.")
@@ -111,40 +113,84 @@ export function ChapterClient({ data, trendingNovels }: { data: any; trendingNov
                     {!locked && chapter.content ? (
                         <RichTextRenderer content={chapter.content} />
                     ) : (
-                        <div className="flex flex-col items-center justify-center py-24 bg-muted/30 rounded-2xl shadow-sm border border-border text-center">
-                            <h2 className="text-2xl font-semibold mb-3">🔒 This chapter is locked</h2>
-                            <p className="max-w-md text-muted-foreground mb-6">
-                                Support the <span className="font-medium text-foreground">translator and author </span>
-                                by unlocking this premium chapter. Your contribution helps us keep stories coming!
-                            </p>
+                        <>
+                            <RichTextRenderer content={chapter.content} />
+                            <div className="relative flex flex-col items-center justify-center py-8  rounded-2xl  text-center">
+                                <div className="absolute inset-x-0 -top-14 h-16 bg-gradient-to-t from-background via-background/90 to-transparent pointer-events-none" />
+                                {/* If NOT logged in */}
+                                {!session ? (
+                                    <>
+                                        <h2 className="text-2xl font-semibold mb-3">
+                                            🔐 Please log in to continue
+                                        </h2>
 
-                            <Button
-                                onClick={handleUnlock}
-                                className="px-8 py-3 text-base font-medium transition-all hover:scale-[1.03]"
-                            >
-                                {unlocking ? "Unlocking..." : `Unlock for ${chapter.priceCoins || 50} Coins`}
-                            </Button>
+                                        <p className="max-w-md text-muted-foreground mb-6">
+                                            Create an account or log in to continue reading chapters and keep the track of your reading progress.
+                                        </p>
 
-                            {!session && (
-                                <p className="mt-4 text-sm text-muted-foreground">
-                                    <button
-                                        onClick={() => router.push("/login?callbackUrl=" + encodeURIComponent(window.location.pathname))}
-                                        className="text-primary font-medium hover:underline"
-                                    >
-                                        Log in
-                                    </button>{" "}
-                                    to unlock and support creators.
-                                </p>
-                            )}
+                                        <div className="flex gap-4">
+                                            <Button
+                                                onClick={() =>
+                                                    router.push(
+                                                        "/login?callbackUrl=" +
+                                                        encodeURIComponent(window.location.pathname)
+                                                    )
+                                                }
+                                                className="px-6"
+                                            >
+                                                Log In
+                                            </Button>
 
-                            <p className="mt-3 text-xs text-muted-foreground">
-                                Don&apos;t have enough coins?{" "}
-                                <button onClick={() => router.push("/coins")} className="text-primary font-medium hover:underline">
-                                    Get more here
-                                </button>
-                                .
-                            </p>
-                        </div>
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => router.push("/register")}
+                                                className="px-6"
+                                            >
+                                                Sign Up
+                                            </Button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        {/* LOCKED VIEW (Only for logged-in users) */}
+                                        <h2 className="text-2xl font-semibold mb-3">
+                                            🔒 This chapter is locked
+                                        </h2>
+
+                                        <p className="max-w-md text-muted-foreground mb-6">
+                                            Support the{" "}
+                                            <span className="font-medium text-foreground">
+                                                translator and author
+                                            </span>{" "}
+                                            by unlocking this premium chapter. Your contribution helps us keep
+                                            stories coming!
+                                        </p>
+
+                                        <Button
+                                            onClick={handleUnlock}
+                                            disabled={unlocking}
+                                            className="px-8 py-3 text-base font-medium transition-all hover:scale-[1.03]"
+                                        >
+                                            {unlocking
+                                                ? "Unlocking..."
+                                                : `Unlock for ${chapter.priceCoins || 50}`}
+                                            <Coins className="ml-2 text-yellow-600" size={18} />
+                                        </Button>
+
+                                        <p className="mt-3 text-xs text-muted-foreground">
+                                            Don&apos;t have enough coins?{" "}
+                                            <button
+                                                onClick={() => router.push("/coins")}
+                                                className="text-primary font-medium hover:underline"
+                                            >
+                                                Get more here
+                                            </button>
+                                            .
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+                        </>
                     )}
                 </ReaderContainer>
 

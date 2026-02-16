@@ -6,8 +6,7 @@ import { prisma } from "@/lib/prisma";
 import redis, { CACHE_KEYS, CACHE_TTL } from "@/lib/redis";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { NotificationType } from "@prisma/client";
-import { getIO } from "@/lib/socket";
+import { generateTeaser } from "./utils";
 export class NovelAPI {
   static async getFeaturedNovels(limit = 8) {
     const cacheKey = CACHE_KEYS.featuredNovels;
@@ -470,7 +469,7 @@ export async function getChapter(slug: string, chapterSlug: string) {
         title: chapter.title,
         slug: chapter.slug,
         order: chapter.order,
-        content: isLocked ? null : chapter.content,
+        content: isLocked ? generateTeaser(chapter.content) : chapter.content,
         priceCoins: chapter.priceCoins,
         isLocked,
       },
@@ -486,50 +485,3 @@ export async function getChapter(slug: string, chapterSlug: string) {
   }
 }
 
-export class NotificationsAPI {
-  static async notifyNewChapter(params: {
-    novelId: string;
-    chapterId: string;
-  }) {
-    const novel = await prisma.novel.findUnique({
-      where: { id: params.novelId },
-      select: { id: true, title: true, slug: true },
-    });
-    if (!novel) return;
-
-    const chapter = await prisma.chapter.findUnique({
-      where: { id: params.chapterId },
-      select: { id: true, title: true, slug: true, novelId: true },
-    });
-    if (!chapter) return;
-
-    const followers = await prisma.bookmark.findMany({
-      where: { novelId: params.novelId },
-      select: { userId: true },
-    });
-
-    await prisma.notification.createMany({
-      data: followers.map((f) => ({
-        userId: f.userId,
-        type: NotificationType.NEW_CHAPTER,
-        title: `New chapter in ${novel.title}`,
-        body: chapter.title,
-        url: `/novel/${novel.slug}/chapter/${chapter.slug}`,
-        data: { novelId: novel.id, chapterId: chapter.id },
-      })),
-    });
-
-    try {
-      const io = await getIO();
-      followers.forEach((f) => {
-        io.to(f.userId).emit("notification:new");
-      });
-    } catch (error) {
-      console.error(
-        "[Notifications] Failed to emit socket notification:",
-        error,
-      );
-      
-    }
-  }
-}

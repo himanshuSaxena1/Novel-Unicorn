@@ -26,7 +26,6 @@ import {
   X,
   SunMoonIcon,
 } from 'lucide-react'
-import { NotificationBell } from './notifications/NotificationBell'
 import { cn } from '@/lib/utils'
 
 export default function Navbar() {
@@ -66,7 +65,7 @@ export default function Navbar() {
           {/* Right side */}
           <div className="flex items-center gap-2 sm:gap-4">
             {session?.user && (
-              <div className="hidden items-center gap-4 sm:flex">
+              <div className="items-center gap-4 flex">
                 <Link
                   href="/coins"
                   className=" flex items-center gap-2 rounded-md  text-base font-medium text-amber-700 hover:bg-amber-50/80 dark:hover:bg-amber-950/30 transition-colors"
@@ -74,8 +73,6 @@ export default function Navbar() {
                   <CoinsIcon className="h-4 w-4 text-amber-600" />
                   <span>{session.user.coinBalance ?? 0}</span>
                 </Link>
-
-                <NotificationBell />
               </div>
             )}
             {/* User / Auth */}

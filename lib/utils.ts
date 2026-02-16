@@ -95,3 +95,11 @@ export function formatTimeAgo(date: Date | string): string {
     ? "Just now"
     : `${seconds} second${seconds === 1 ? "" : "s"} ago`;
 }
+
+export function generateTeaser(content: string | null, maxChars: number = 700) {
+  if (!content) return null;
+
+  return content.length > maxChars
+    ? content.slice(0, maxChars).trimEnd() + "..."
+    : content;
+}
