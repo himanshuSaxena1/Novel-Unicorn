@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/axios"
 import { Progress } from "@/components/ui/progress"
 import Link from "next/link"
+import { calculateStreak } from "@/lib/utils"
 
 
 interface ReadingActivity {
@@ -29,7 +30,7 @@ export default function UserActivityPage() {
     const router = useRouter()
     const { id } = useParams()
     const queryClient = useQueryClient()
-
+    const heatmap: Record<string, number> = {}
 
 
     // ---------------- Activity ----------------
@@ -43,6 +44,13 @@ export default function UserActivityPage() {
         enabled: !!id,
     })
 
+    const activityDates = activity?.map(a => a.updatedAt) || []
+    const streak = calculateStreak(activityDates)
+
+    activity?.forEach(a => {
+        const day = new Date(a.updatedAt).toDateString()
+        heatmap[day] = (heatmap[day] || 0) + 1
+    })
 
     if (activityLoading) {
         return (
@@ -68,6 +76,67 @@ export default function UserActivityPage() {
                     <p className="text-muted-foreground">No reading activity yet.</p>
                 )}
 
+                <div className="flex gap-6 mb-6">
+                    <div className="bg-secondary rounded-lg p-4">
+                        <p className="text-sm text-muted-foreground">Current streak</p>
+                        <p className="text-2xl font-bold">🔥 {streak} days</p>
+                    </div>
+
+                    <div className="bg-secondary rounded-lg p-4">
+                        <p className="text-sm text-muted-foreground">Total sessions</p>
+                        <p className="text-2xl font-bold">{activity?.length || 0}</p>
+                    </div>
+                </div>
+
+                <div className="mb-10">
+                    <h3 className="font-semibold mb-2">Reading activity (last 30 days)</h3>
+
+                    <div className="mb-10">
+                        <h3 className="font-semibold mb-4">Reading Activity (Last 8 Weeks)</h3>
+
+                        <div className="flex gap-1">
+                            {Array.from({ length: 8 }).map((_, weekIndex) => (
+                                <div key={weekIndex} className="flex flex-col gap-1">
+                                    {Array.from({ length: 7 }).map((_, dayIndex) => {
+                                        const date = new Date()
+                                        date.setDate(date.getDate() - (weekIndex * 7 + dayIndex))
+
+                                        const key = date.toDateString()
+                                        const count = heatmap[key] || 0
+
+                                        const intensity =
+                                            count === 0
+                                                ? "bg-muted"
+                                                : count < 2
+                                                    ? "bg-emerald-300"
+                                                    : count < 4
+                                                        ? "bg-emerald-500"
+                                                        : "bg-emerald-700"
+
+                                        return (
+                                            <div
+                                                key={key}
+                                                title={`${key}: ${count} sessions`}
+                                                className={`w-4 h-4 rounded-sm transition-colors ${intensity}`}
+                                            />
+                                        )
+                                    })}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Legend */}
+                        <div className="flex items-center gap-2 mt-4 text-xs text-muted-foreground">
+                            <span>Less</span>
+                            <div className="w-4 h-4 bg-muted rounded-sm" />
+                            <div className="w-4 h-4 bg-emerald-300 rounded-sm" />
+                            <div className="w-4 h-4 bg-emerald-500 rounded-sm" />
+                            <div className="w-4 h-4 bg-emerald-700 rounded-sm" />
+                            <span>More</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="space-y-4">
                     {activity?.map(item => (
                         <div
@@ -89,7 +158,12 @@ export default function UserActivityPage() {
                                 </span>
                             </div>
 
-                            <Progress value={item.progress} className="h-2 w-full" />
+                            <div className="w-full h-2 bg-muted rounded overflow-hidden">
+                                <div
+                                    className="h-full bg-primary transition-all"
+                                    style={{ width: `${Math.min(100, Math.max(0, item.progress))}%` }}
+                                />
+                            </div>
 
                             <div className="text-sm flex justify-between text-muted-foreground">
                                 <span>{item.progress}% complete</span>

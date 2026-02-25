@@ -103,3 +103,19 @@ export function generateTeaser(content: string | null, maxChars: number = 700) {
     ? content.slice(0, maxChars).trimEnd() + "..."
     : content;
 }
+
+export function calculateStreak(dates: string[]) {
+  const days = new Set(
+    dates.map(d => new Date(d).toDateString())
+  )
+
+  let streak = 0
+  let current = new Date()
+
+  while (days.has(current.toDateString())) {
+    streak++
+    current.setDate(current.getDate() - 1)
+  }
+
+  return streak
+}
