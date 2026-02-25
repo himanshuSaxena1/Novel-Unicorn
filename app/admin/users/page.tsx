@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Search, MoreHorizontal, Edit, Ban, Crown, Users, UserCheck, Shield, Coins } from "lucide-react"
+import { Search, MoreHorizontal, Edit, Ban, Crown, Users, UserCheck, Shield, Coins, Activity } from "lucide-react"
 import Link from "next/link"
 import { DataTablePagination } from "@/components/pagination"
 
@@ -199,8 +199,10 @@ export default function AdminUsersPage() {
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem>
-                            <Crown className="mr-2 h-4 w-4" />
-                            Change Subscription
+                            <Link className="flex items-center gap-1" href={`/admin/users/${user.id}/activity`}>
+                              <Activity className="mr-2 h-4 w-4" />
+                              See Activity
+                            </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-red-600">
                             <Ban className="mr-2 h-4 w-4" />
