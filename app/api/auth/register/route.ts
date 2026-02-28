@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         role: "USER",
         coinBalance: 0,
+        emailVerified: new Date(),
       },
       select: {
         id: true,

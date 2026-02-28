@@ -195,7 +195,7 @@ export default function SignUpPage() {
               </Label>
             </div>
             
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || !formData.acceptTerms}>
               {isLoading ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>

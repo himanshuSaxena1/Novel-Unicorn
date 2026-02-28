@@ -177,7 +177,7 @@ export default function AdminUsersPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={user.emailVerified ? "default" : "secondary"}>
+                      <Badge variant={user.emailVerified ? "default" : "destructive"}>
                         {user.emailVerified ? "Active" : "Pending"}
                       </Badge>
                     </TableCell>
