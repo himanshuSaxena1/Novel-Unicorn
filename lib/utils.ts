@@ -24,6 +24,15 @@ export type Package = {
 
 export const PACKAGES: Package[] = [
   {
+    id: "starter",
+    name: "Starter",
+    price: 4.99,
+    coins: 500,
+    subtitle: "Best for Beginners",
+    description:
+      "Ideal for new users to get a taste of premium content and explore the platform.",
+  },
+  {
     id: "bronze",
     name: "Bronze",
     price: 9.99,
@@ -50,15 +59,15 @@ export const PACKAGES: Package[] = [
     description:
       "Great for avid readers who want extended access to exclusive content and bonuses.",
   },
-  {
-    id: "platinum",
-    name: "Platinum",
-    price: 99.99,
-    coins: 12000,
-    subtitle: "Ultimate Experience",
-    description:
-      "The best choice for power users with unlimited access to all premium content and perks.",
-  },
+  // {
+  //   id: "platinum",
+  //   name: "Platinum",
+  //   price: 99.99,
+  //   coins: 12000,
+  //   subtitle: "Ultimate Experience",
+  //   description:
+  //     "The best choice for power users with unlimited access to all premium content and perks.",
+  // },
 ];
 
 export function formatTimeAgo(date: Date | string): string {
