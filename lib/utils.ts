@@ -23,15 +23,15 @@ export type Package = {
 };
 
 export const PACKAGES: Package[] = [
-  {
-    id: "starter",
-    name: "Starter",
-    price: 4.99,
-    coins: 500,
-    subtitle: "Best for Beginners",
-    description:
-      "Ideal for new users to get a taste of premium content and explore the platform.",
-  },
+  // {
+  //   id: "starter",
+  //   name: "Starter",
+  //   price: 4.99,
+  //   coins: 500,
+  //   subtitle: "Best for Beginners",
+  //   description:
+  //     "Ideal for new users to get a taste of premium content and explore the platform.",
+  // },
   {
     id: "bronze",
     name: "Bronze",
