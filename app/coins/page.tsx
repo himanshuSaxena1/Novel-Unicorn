@@ -158,7 +158,7 @@ export default function CoinsPage() {
       {/* Packages Section */}
       <section className="relative px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {PACKAGES.map((pkg, index) => {
               const paypalContainerId = `paypal-buttons-${pkg.id}`
               const isThisSelected = selected?.id === pkg.id
