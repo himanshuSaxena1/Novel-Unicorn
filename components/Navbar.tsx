@@ -32,6 +32,7 @@ import {
 } from 'lucide-react'
 import { Input } from './ui/input'
 import { StarsDisplay } from './coins'
+import Image from 'next/image'
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -57,7 +58,7 @@ export default function Navbar() {
         </Link>
 
         {/* Center - Search (hidden on mobile) */}
-        <div className="hidden md:flex flex-1 max-w-sm mx-8">
+        {/* <div className="hidden md:flex flex-1 max-w-sm mx-8">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -67,7 +68,7 @@ export default function Navbar() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Right - Menu */}
         <div className="flex items-center space-x-3">
@@ -77,6 +78,12 @@ export default function Navbar() {
               <Button className='flex items-center' variant="ghost" size="sm">
                 <List className="mr-2 h-4 w-4" />
                 Browse
+              </Button>
+            </Link>
+            <Link href="https://discord.gg/eVmRqxX6" target="_blank" rel="noopener noreferrer">
+              <Button className='flex items-center gap-1 bg-[#5865F2] rounded-sm px-2 py-1 text-white' variant="ghost" size="sm">
+                <Image src="https://cdn.discordapp.com/embed/avatars/0.png?size=128" alt="Discord" width={24} height={24} className="h-6 w-6 rounded-xl" draggable="false" />
+                Discord
               </Button>
             </Link>
 
@@ -194,6 +201,7 @@ export default function Navbar() {
                 Browse
               </Button>
             </Link>
+            
 
             {!session ? (
               <div className="flex flex-col gap-2">

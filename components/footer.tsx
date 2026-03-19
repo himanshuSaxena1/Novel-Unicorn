@@ -2,6 +2,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 const Footer = () => {
     return (
@@ -63,19 +65,20 @@ const Footer = () => {
                 {/* Newsletter Signup */}
                 <div>
                     <h4 className="text-lg font-semibold text-gray-200 mb-4">Stay Updated</h4>
-                    <p className="text-sm text-gray-400 mb-2">Subscribe to our newsletter for the latest updates.</p>
+                    <p className="text-sm text-gray-400 mb-2">Join our community for the latest updates.</p>
                     <form className="flex flex-col sm:flex-row gap-2">
                         <input
                             type="email"
                             placeholder="Enter your email"
                             className="w-full sm:flex-1 px-3 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         />
-                        <Button
-                            type="submit"
-                            className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-700 rounded-lg py-2 px-4"
-                        >
-                            Subscribe
-                        </Button>
+                        <Link href="https://discord.gg/eVmRqxX6" target="_blank" rel="noopener noreferrer">
+                            <Button className='flex items-center gap-2 bg-[#5865F2] rounded-sm px-2 py-1' variant="ghost" size="sm">
+                                <Image src="https://cdn.discordapp.com/embed/avatars/0.png?size=128" alt="Discord" width={24} height={24} className="h-6 w-6 rounded-xl" draggable="false" />
+                                Discord
+                            </Button>
+                        </Link>
+
                     </form>
                 </div>
             </div>
