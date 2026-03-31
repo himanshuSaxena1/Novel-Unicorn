@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const PromoBanner = () => {
-    const SALE_DURATION = 180000; // ms (3 minutes)
+    const SALE_DURATION = 3000000; // ms (3 minutes)
 
     const getInitialTime = () => {
         if (typeof window === "undefined") return SALE_DURATION;
