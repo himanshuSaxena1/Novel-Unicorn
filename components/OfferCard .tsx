@@ -4,21 +4,35 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const PromoBanner = () => {
-    const SALE_DURATION = 3000000; // ms (3 minutes)
+    const SALE_DURATION = 50 * 60 * 60 * 1000; // 50 hours
+    const STORAGE_KEY = "saleEndTime";
+    const VERSION_KEY = "saleVersion";
+    const CURRENT_VERSION = "v2"; // change this anytime to reset all users
 
     const getInitialTime = () => {
-        if (typeof window === "undefined") return SALE_DURATION;
+        if (typeof window === "undefined") return SALE_DURATION / 1000;
 
-        const savedEnd = localStorage.getItem("saleEndTime");
+        const savedVersion = localStorage.getItem(VERSION_KEY);
+        const savedEnd = localStorage.getItem(STORAGE_KEY);
 
+        // 🔥 Force reset if version changed
+        if (savedVersion !== CURRENT_VERSION) {
+            const newEnd = Date.now() + SALE_DURATION;
+            localStorage.setItem(STORAGE_KEY, newEnd.toString());
+            localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
+            return Math.floor(SALE_DURATION / 1000);
+        }
+
+        // ✅ Normal flow
         if (savedEnd) {
             const remaining = Math.floor((+savedEnd - Date.now()) / 1000);
             return remaining > 0 ? remaining : 0;
-        } else {
-            const newEnd = Date.now() + SALE_DURATION;
-            localStorage.setItem("saleEndTime", newEnd.toString());
-            return Math.floor(SALE_DURATION / 1000);
         }
+
+        // 🆕 First-time users
+        const newEnd = Date.now() + SALE_DURATION;
+        localStorage.setItem(STORAGE_KEY, newEnd.toString());
+        return Math.floor(SALE_DURATION / 1000);
     };
 
     const [timeLeft, setTimeLeft] = useState(getInitialTime);
