@@ -33,6 +33,7 @@ import {
 import { Input } from './ui/input'
 import { StarsDisplay } from './coins'
 import Image from 'next/image'
+import Offers from './OfferCard '
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -80,7 +81,7 @@ export default function Navbar() {
                 Browse
               </Button>
             </Link>
-            <Link href="https://discord.gg/eVmRqxX6" target="_blank" rel="noopener noreferrer">
+            <Link href="https://discord.gg/jUtK3TVA7" target="_blank" rel="noopener noreferrer">
               <Button className='flex items-center gap-1 bg-[#5865F2] rounded-sm px-2 py-1 text-white' variant="ghost" size="sm">
                 <Image src="https://cdn.discordapp.com/embed/avatars/0.png?size=128" alt="Discord" width={24} height={24} className="h-6 w-6 rounded-xl" draggable="false" />
                 Discord
@@ -181,6 +182,7 @@ export default function Navbar() {
 
         </div>
       </div>
+      <Offers />
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
@@ -201,7 +203,7 @@ export default function Navbar() {
                 Browse
               </Button>
             </Link>
-            
+
 
             {!session ? (
               <div className="flex flex-col gap-2">
