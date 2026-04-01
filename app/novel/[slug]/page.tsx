@@ -191,10 +191,10 @@ export default async function NovelPage({ params }: { params: { slug: string } }
                                                         READ
                                                     </div>
                                                 )}
-                                                <div className="flex items-center gap-1">
+                                                {/* <div className="flex items-center gap-1">
                                                     <Eye className="h-3 w-3" />
                                                     {chapter.views?.toLocaleString() ?? 0}
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </Link>
                                     ))}
