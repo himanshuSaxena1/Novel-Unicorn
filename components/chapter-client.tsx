@@ -18,7 +18,6 @@ import { ReportIssueDialog } from "./report-issue-modal"
 import { Coins } from "lucide-react"
 
 export function ChapterClient({ data, trendingNovels }: { data: any; trendingNovels: any }) {
-    console.log(data);
     const router = useRouter()
     const { novel, chapter, prev, next } = data
     const [locked, setLocked] = useState(chapter.isLocked)

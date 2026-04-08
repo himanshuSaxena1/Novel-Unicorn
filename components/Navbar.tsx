@@ -117,7 +117,7 @@ export default function Navbar() {
                 <Button variant="outline" size="sm" className="flex items-center space-x-2">
 
                   <User className="h-5 w-5" />
-                  <span className="hidden sm:block">{session.user.username}</span>
+                  <span className="hidden sm:block capitalize">{session.user.name}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-screen mt-2 rounded-none md:w-56">

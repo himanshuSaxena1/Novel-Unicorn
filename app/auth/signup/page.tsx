@@ -12,6 +12,8 @@ import { Separator } from '@/components/ui/separator'
 import { Checkbox } from '@/components/ui/checkbox'
 import { BookOpen, Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -25,15 +27,30 @@ export default function SignUpPage() {
     confirmPassword: '',
     acceptTerms: false
   })
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+
+    if (error === "OAuthAccountNotLinked") {
+      toast.error(
+        "This email is already registered with password. Please login using email & password first, then connect Google."
+      );
+    }
+
+    if (error === "CredentialsSignin") {
+      toast.error("Invalid email or password");
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match')
       return
     }
-    
+
     if (!formData.acceptTerms) {
       toast.error('Please accept the terms and conditions')
       return
@@ -54,7 +71,7 @@ export default function SignUpPage() {
 
       if (response.ok) {
         toast.success('Account created successfully!')
-        
+
         // Auto sign in after registration
         const result = await signIn('credentials', {
           email: formData.email,
@@ -78,17 +95,17 @@ export default function SignUpPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/' })
+      await signIn("google", { callbackUrl: "/" });
     } catch (error) {
-      toast.error('Failed to sign in with Google')
-      setIsLoading(false)
+      toast.error("Google sign-in failed");
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-background p-4">
+    <div className="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Create Account</CardTitle>
@@ -96,7 +113,7 @@ export default function SignUpPage() {
             Join thousands of readers and discover amazing stories
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -114,7 +131,7 @@ export default function SignUpPage() {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -130,7 +147,7 @@ export default function SignUpPage() {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -153,7 +170,7 @@ export default function SignUpPage() {
                 </button>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <div className="relative">
@@ -176,7 +193,7 @@ export default function SignUpPage() {
                 </button>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="terms"
@@ -194,12 +211,12 @@ export default function SignUpPage() {
                 </Link>
               </Label>
             </div>
-            
+
             <Button type="submit" className="w-full" disabled={isLoading || !formData.acceptTerms}>
               {isLoading ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>
-          
+
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <Separator className="w-full" />
@@ -208,7 +225,7 @@ export default function SignUpPage() {
               <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
-          
+
           <Button
             type="button"
             variant="outline"
@@ -236,7 +253,7 @@ export default function SignUpPage() {
             </svg>
             Continue with Google
           </Button>
-          
+
           <div className="text-center text-sm">
             Already have an account?{' '}
             <Link href="/auth/signin" className="text-primary hover:underline">

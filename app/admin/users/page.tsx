@@ -19,6 +19,7 @@ import {
 import { Search, MoreHorizontal, Edit, Ban, Crown, Users, UserCheck, Shield, Coins, Activity } from "lucide-react"
 import Link from "next/link"
 import { DataTablePagination } from "@/components/pagination"
+import api from "@/lib/axios"
 
 const ROLE_COLORS = {
   USER: "bg-blue-500",
@@ -55,6 +56,28 @@ export default function AdminUsersPage() {
       return response.json()
     },
   })
+
+  const handleUserDelete = async (userId: string) => {
+    if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      const response = await api.delete(`/admin/users/${userId}`);
+
+      if (response.status !== 200) {
+        throw new Error("Failed to delete user");
+      }
+
+      // Optionally, you can show a success message here
+      alert("User deleted successfully");
+      // Refresh the user list after deletion
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("An error occurred while trying to delete the user.");
+    }
+  }
 
   return (
     <div className="space-y-4 md:space-y-8 max-w-7xl mx-auto">
@@ -205,8 +228,10 @@ export default function AdminUsersPage() {
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-red-600">
-                            <Ban className="mr-2 h-4 w-4" />
-                            Suspend User
+                            <Button variant="ghost" className="h-1 w-full " onClick={() => handleUserDelete(user.id)}>
+                              <Ban className="mr-2 h-4 w-4" />
+                              Delete User
+                            </Button>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

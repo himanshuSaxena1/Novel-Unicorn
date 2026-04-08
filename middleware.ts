@@ -26,7 +26,7 @@ async function handleAuthMiddleware(
   if (pathname.startsWith("/admin")) {
     // No token, redirect to login
     if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL("/auth/signup", request.url));
     }
 
     // Only ADMIN can access all /admin routes

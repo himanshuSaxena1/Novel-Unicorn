@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator'
 import { BookOpen, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useEffect } from "react";
 
 export default function SignInPage() {
   const router = useRouter()
@@ -23,6 +24,20 @@ export default function SignInPage() {
     email: '',
     password: ''
   })
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+
+    if (error === "OAuthAccountNotLinked") {
+      toast.error(
+        "This email is already registered with password. Please login using email & password first, then connect Google."
+      );
+    }
+
+    if (error === "CredentialsSignin") {
+      toast.error("Invalid email or password");
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,17 +66,17 @@ export default function SignInPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await signIn('google', { callbackUrl })
+      await signIn("google", { callbackUrl: "/" });
     } catch (error) {
-      toast.error('Failed to sign in with Google')
-      setIsLoading(false)
+      toast.error("Google sign-in failed");
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-background p-4">
+    <div className="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
