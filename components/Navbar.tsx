@@ -46,7 +46,7 @@ export default function Navbar() {
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <Offers />
+      {/* <Offers /> */}
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left - Logo */}
         <Link href="/" className="flex items-center gap-1.5">
