@@ -32,15 +32,15 @@ export const PACKAGES: Package[] = [
   //   description:
   //     "Ideal for new users to get a taste of premium content and explore the platform.",
   // },
-  // {
-  //   id: "bronze",
-  //   name: "Bronze",
-  //   price: 9.99,
-  //   coins: 1200,
-  //   subtitle: "Great for Starters",
-  //   description:
-  //     "Perfect for new users to explore premium chapters and unlock basic content.",
-  // },
+  {
+    id: "bronze",
+    name: "Bronze",
+    price: 9.99,
+    coins: 1200,
+    subtitle: "Great for Starters",
+    description:
+      "Perfect for new users to explore premium chapters and unlock basic content.",
+  },
   {
     id: "silver",
     name: "Silver",

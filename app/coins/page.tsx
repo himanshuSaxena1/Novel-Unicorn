@@ -141,7 +141,9 @@ export default function CoinsPage() {
           <div className="text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2">
               <Sparkles className="h-4 w-4 text-cyan-800" />
-              <span className="text-sm font-semibold text-cyan-800">Premium Coins</span>
+              <span className="text-sm font-semibold text-cyan-800">
+                Premium Coins
+              </span>
             </div>
 
             <h1 className="bg-gradient-to-r from-white/40 via-slate-500 to-slate-700 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl lg:text-6xl">
@@ -149,7 +151,8 @@ export default function CoinsPage() {
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
-              Purchase coin packages to access exclusive chapters and premium reading experiences. Secure PayPal checkout, instant delivery.
+              Purchase coin packages to access exclusive chapters and premium
+              reading experiences. Secure PayPal checkout, instant delivery.
             </p>
           </div>
         </div>
@@ -158,42 +161,41 @@ export default function CoinsPage() {
       {/* Packages Section */}
       <section className="relative px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {PACKAGES.map((pkg, index) => {
-              const paypalContainerId = `paypal-buttons-${pkg.id}`
-              const isThisSelected = selected?.id === pkg.id
-              const isPopular = index === 1
-              const mostBeneficial = index === 2
-              const goldBadge = index === 3
+              const paypalContainerId = `paypal-buttons-${pkg.id}`;
+              const isThisSelected = selected?.id === pkg.id;
+              const isPopular = index === 1;
+              const mostBeneficial = index === 2;
+              const goldBadge = index === 3;
 
               return (
                 <Card
                   key={pkg.id}
                   className={cn(
-                    'relative flex flex-col overflow-hidden border transition-all duration-300 p-0',
+                    "relative flex flex-col overflow-hidden border transition-all duration-300 p-0",
                     isThisSelected
-                      ? 'border-cyan-500 bg-slate-800/80 shadow-2xl shadow-cyan-500/20 scale-105'
+                      ? "border-cyan-500 bg-slate-800/80 shadow-2xl shadow-cyan-500/20 scale-105"
                       : mostBeneficial
-                        ? 'border-blue-500/50 bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg shadow-blue-500/10'
+                        ? "border-blue-500/50 bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg shadow-blue-500/10"
                         : isPopular
-                          ? 'border-cyan-500/50 bg-slate-800/50 shadow-lg'
+                          ? "border-cyan-500/50 bg-slate-800/50 shadow-lg"
                           : goldBadge
-                            ? 'border-yellow-500/50 bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg shadow-blue-500/10 text-white'
-                            : 'border-slate-700/50 bg-slate-800/40 hover:bg-slate-800/60'
-
+                            ? "border-yellow-500/50 bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg shadow-blue-500/10 text-white"
+                            : "border-slate-700/50 bg-slate-800/40 hover:bg-slate-800/60",
                   )}
                 >
                   {mostBeneficial && (
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
                   )}
                   {mostBeneficial && (
-                    <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 px-3 py-1 text-xs font-bold text-white">
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 px-3 py-1 text-xs font-bold text-white">
                       <Crown className="h-3 w-3" />
                       Best Value
                     </span>
                   )}
                   {isPopular && (
-                    <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-600 px-3 py-1 text-xs font-bold text-white">
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-600 px-3 py-1 text-xs font-bold text-white">
                       <Zap className="h-3 w-3" />
                       Popular
                     </span>
@@ -245,9 +247,11 @@ export default function CoinsPage() {
                     <Button
                       onClick={() => createOrder(pkg)}
                       disabled={creatingOrder || !!orderId}
-                      className={`w-full  ${goldBadge ? 'border-yellow-500/50 bg-gradient-to-br from-orange-500 to-yellow-500 hover:shadow-lg hover:shadow-yellow-500/50 text-white' : 'bg-gradient-to-r from-cyan-600 to-blue-700 font-semibold text-white hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50'}`}
+                      className={`w-full  ${goldBadge ? "border-yellow-500/50 bg-gradient-to-br from-orange-500 to-yellow-500 hover:shadow-lg hover:shadow-yellow-500/50 text-white" : "bg-gradient-to-r from-cyan-600 to-blue-700 font-semibold text-white hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50"}`}
                     >
-                      {creatingOrder && isThisSelected ? 'Processing...' : 'Get Coins'}
+                      {creatingOrder && isThisSelected
+                        ? "Processing..."
+                        : "Get Coins"}
                     </Button>
 
                     {orderId && isThisSelected && (
@@ -258,7 +262,7 @@ export default function CoinsPage() {
                     )}
                   </CardFooter>
                 </Card>
-              )
+              );
             })}
           </div>
         </div>
@@ -302,5 +306,5 @@ export default function CoinsPage() {
         </div>
       </section>
     </main>
-  )
+  );
 }
